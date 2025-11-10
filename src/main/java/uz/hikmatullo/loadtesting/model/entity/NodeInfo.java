@@ -1,0 +1,21 @@
+package uz.hikmatullo.loadtesting.model.entity;
+
+import java.time.Instant;
+import java.util.UUID;
+
+public class NodeInfo {
+    private final String id = UUID.randomUUID().toString();
+    private String groupId;
+    private String host;
+    private Instant connectedAt = Instant.now();
+
+    public NodeInfo(String groupId,  String host) {
+        this.groupId = groupId;
+        this.host = host;
+    }
+
+    public String getId() { return id; }
+    public String getGroupId() { return groupId; }
+    public String getHost() { return host; }
+    public Instant getConnectedAt() { return connectedAt; }
+}
