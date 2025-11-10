@@ -10,7 +10,7 @@
     </parent>
     <groupId>uz.hikmatullo</groupId>
     <artifactId>load-testing</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>load-testing</name>
     <description>load-testing</description>
     <url/>

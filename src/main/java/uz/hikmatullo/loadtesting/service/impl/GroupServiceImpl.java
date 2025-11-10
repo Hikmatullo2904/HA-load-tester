@@ -1,4 +1,4 @@
-package uz.hikmatullo.loadtesting.service;
+package uz.hikmatullo.loadtesting.service.impl;
 
 import org.springframework.stereotype.Service;
 import uz.hikmatullo.loadtesting.exceptions.NotFoundException;
@@ -7,20 +7,21 @@ import uz.hikmatullo.loadtesting.model.request.GroupCreateRequest;
 import uz.hikmatullo.loadtesting.model.request.GroupUpdateRequest;
 import uz.hikmatullo.loadtesting.model.response.GroupResponse;
 import uz.hikmatullo.loadtesting.repository.GroupRepository;
+import uz.hikmatullo.loadtesting.service.interfaces.GroupService;
 
 import java.util.List;
 
 @Service
-public class GroupService {
+public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository repository;
 
-    public GroupService(GroupRepository repository) {
+    public GroupServiceImpl(GroupRepository repository) {
         this.repository = repository;
     }
 
     public GroupResponse create(GroupCreateRequest req) {
-        Group group = new Group(req.name(), req.description(), req.masterHost());
+        Group group = new Group(req.name(), req.description());
         repository.save(group);
         return toResponse(group);
     }
@@ -52,7 +53,6 @@ public class GroupService {
                 g.getId(),
                 g.getName(),
                 g.getDescription(),
-                g.getMasterHost(),
                 g.getCreatedAt()
         );
     }
