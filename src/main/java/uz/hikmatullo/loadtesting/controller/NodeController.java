@@ -1,11 +1,12 @@
 package uz.hikmatullo.loadtesting.controller;
 
+import uz.hikmatullo.loadtesting.model.request.JoinMasterNodeGroupRequest;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
+import uz.hikmatullo.loadtesting.model.response.GroupInfoResponse;
 import uz.hikmatullo.loadtesting.model.response.NodeResponse;
+import uz.hikmatullo.loadtesting.service.interfaces.ConnectToMasterNodeService;
 import uz.hikmatullo.loadtesting.service.interfaces.NodeService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,24 +15,31 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/nodes")
 public class NodeController {
-
-    private static final Logger log = LoggerFactory.getLogger(NodeController.class);
     private final NodeService service;
+    private final ConnectToMasterNodeService connectToMasterNodeService;
 
-    public NodeController(NodeService service) {
+    public NodeController(NodeService service, ConnectToMasterNodeService connectToMasterNodeService) {
         this.service = service;
+        this.connectToMasterNodeService = connectToMasterNodeService;
     }
 
-    @PostMapping("/connect")
+    /*
+    * This method accepts connection request from worker nodes
+    * */
+    @PostMapping("/receive-join-group")
     @ResponseStatus(HttpStatus.CREATED)
-    public NodeResponse connect(@RequestBody NodeConnectRequest request) {
-        log.info("Received connection from node: host={} groupId={}", request.host(), request.groupId());
-        return service.connect(request);
+    public GroupInfoResponse connect(@RequestBody NodeConnectRequest request) {
+        return service.receiveConnection(request);
     }
 
     @GetMapping("/group/{groupId}")
     public List<NodeResponse> getByGroup(@PathVariable String groupId) {
-        log.info("Fetching connected nodes for groupId={}", groupId);
         return service.getNodesByGroup(groupId);
+    }
+
+
+    @PostMapping("/send-join-group")
+    public void connectToMaster(@RequestBody JoinMasterNodeGroupRequest request) {
+        connectToMasterNodeService.connectToMaster(request);
     }
 }

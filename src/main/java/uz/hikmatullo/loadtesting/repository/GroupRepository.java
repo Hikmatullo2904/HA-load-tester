@@ -1,12 +1,15 @@
 package uz.hikmatullo.loadtesting.repository;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import uz.hikmatullo.loadtesting.model.entity.Group;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Repository
+@Component
 public class GroupRepository {
 
     private final Map<String, Group> store = new ConcurrentHashMap<>();

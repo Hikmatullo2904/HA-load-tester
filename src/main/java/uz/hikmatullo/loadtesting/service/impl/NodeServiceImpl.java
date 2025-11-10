@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import uz.hikmatullo.loadtesting.exceptions.NotFoundException;
 import uz.hikmatullo.loadtesting.model.entity.WorkerNode;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
+import uz.hikmatullo.loadtesting.model.response.GroupInfoResponse;
 import uz.hikmatullo.loadtesting.model.response.NodeResponse;
 import uz.hikmatullo.loadtesting.repository.GroupRepository;
 import uz.hikmatullo.loadtesting.repository.WorkerNodeRepository;
 import uz.hikmatullo.loadtesting.service.interfaces.NodeService;
+import uz.hikmatullo.loadtesting.util.Util;
 
 import java.util.List;
 
@@ -26,17 +28,18 @@ public class NodeServiceImpl implements NodeService {
     }
 
     @Override
-    public NodeResponse connect(NodeConnectRequest request) {
-        log.info("Connection request from host={} for groupId={}", request.host(), request.groupId());
+    public GroupInfoResponse receiveConnection(NodeConnectRequest request) {
+        String host = Util.getCurrentRequestIp();
+        log.info("Connection request from host={} for groupId={}", host, request.groupId());
 
         var group = groupRepository.findById(request.groupId())
                 .orElseThrow(() -> new NotFoundException("Group not found for id " + request.groupId()));
 
-        WorkerNode node = new WorkerNode(request.groupId(), request.host());
+        WorkerNode node = new WorkerNode(request.groupId(), host);
         repository.saveWorkerNode(node);
 
-        log.info("Slave node {} connected successfully to group '{}'", request.host(),  group.getName());
-        return new NodeResponse(node.getId(), node.getGroupId(), node.getHost(), node.getConnectedAt());
+        log.info("Worker node {} connected successfully to group '{}'", host,  group.getName());
+        return new GroupInfoResponse(group.getId(), group.getName());
     }
 
     @Override

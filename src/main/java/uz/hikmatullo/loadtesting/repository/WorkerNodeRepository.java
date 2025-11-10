@@ -1,12 +1,15 @@
 package uz.hikmatullo.loadtesting.repository;
 
+import org.springframework.stereotype.Component;
 import uz.hikmatullo.loadtesting.model.entity.WorkerNode;
-import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Repository
+@Component
 public class WorkerNodeRepository {
     private final Map<String, List<WorkerNode>> worderNodesByGroup = new ConcurrentHashMap<>();
 
