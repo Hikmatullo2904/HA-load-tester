@@ -1,6 +1,7 @@
 package uz.hikmatullo.loadtesting.service.impl;
 
 import org.springframework.stereotype.Service;
+import uz.hikmatullo.loadtesting.exceptions.CustomBadRequestException;
 import uz.hikmatullo.loadtesting.exceptions.CustomNotFoundException;
 import uz.hikmatullo.loadtesting.model.entity.Group;
 import uz.hikmatullo.loadtesting.model.request.GroupCreateRequest;
@@ -21,6 +22,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     public GroupResponse create(GroupCreateRequest req) {
+        validateGroupRequest(req);
         Group group = new Group(req.name(), req.description());
         repository.save(group);
         return toResponse(group);
@@ -37,6 +39,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     public GroupResponse update(String id, GroupUpdateRequest req) {
+        validateGroupUpdateRequest(req);
         Group group = repository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException("Group not found: " + id));
         group.setName(req.name());
@@ -55,5 +58,18 @@ public class GroupServiceImpl implements GroupService {
                 g.getDescription(),
                 g.getCreatedAt()
         );
+    }
+
+    void validateGroupRequest(GroupCreateRequest req) {
+        if (req.name() == null || req.name().isBlank()) {
+            throw new CustomBadRequestException("Name cannot be blank");
+        }
+
+    }
+
+    void validateGroupUpdateRequest(GroupUpdateRequest req) {
+        if (req.name() == null || req.name().isBlank()) {
+            throw new CustomBadRequestException("Name cannot be blank");
+        }
     }
 }

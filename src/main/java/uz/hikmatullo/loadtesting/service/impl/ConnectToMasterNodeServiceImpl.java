@@ -28,6 +28,9 @@ public class ConnectToMasterNodeServiceImpl implements ConnectToMasterNodeServic
 
     @Override
     public void connectToMaster(JoinMasterNodeGroupRequest request) {
+
+        validateRequest(request);
+
         String url = "http://" + request.ip() + ":" + request.port() + "/api/nodes/connect";
         log.info("Connecting to master={} groupId={} ...", url, request.groupId());
 
