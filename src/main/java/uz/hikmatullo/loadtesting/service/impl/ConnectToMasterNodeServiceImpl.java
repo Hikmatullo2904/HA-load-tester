@@ -6,6 +6,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import uz.hikmatullo.loadtesting.exceptions.CustomBadRequestException;
 import uz.hikmatullo.loadtesting.model.entity.MasterNode;
 import uz.hikmatullo.loadtesting.model.request.JoinMasterNodeGroupRequest;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
@@ -27,13 +28,13 @@ public class ConnectToMasterNodeServiceImpl implements ConnectToMasterNodeServic
 
     @Override
     public void connectToMaster(JoinMasterNodeGroupRequest request) {
+        String url = "http://" + request.ip() + ":" + request.port() + "/api/nodes/connect";
+        log.info("Connecting to master={} groupId={} ...", url, request.groupId());
+
+        NodeConnectRequest req = new NodeConnectRequest(request.groupId());
+        HttpEntity<NodeConnectRequest> entity = new HttpEntity<>(req);
+
         try {
-            String url = "http://" + request.ip() + ":" + request.port() + "/api/nodes/connect";
-            log.info("Connecting to master={} groupId={} ...", url, request.groupId());
-
-            NodeConnectRequest req = new NodeConnectRequest(request.groupId());
-            HttpEntity<NodeConnectRequest> entity = new HttpEntity<>(req);
-
             ResponseEntity<GroupInfoResponse> groupInfoResponseResponseEntity = restTemplate.postForEntity(url, entity, GroupInfoResponse.class);
 
             if (groupInfoResponseResponseEntity.getStatusCode().is2xxSuccessful()) {
@@ -48,12 +49,10 @@ public class ConnectToMasterNodeServiceImpl implements ConnectToMasterNodeServic
                 log.info("Successfully connected to master group='{}' ({})", groupInfo.groupName(), groupInfo.groupId());
             } else {
                 log.error("Failed to connect to master. HTTP status: {} body: {}", groupInfoResponseResponseEntity.getStatusCode(), groupInfoResponseResponseEntity.getBody());
+                throw new CustomBadRequestException("Failed to connect master");
             }
-
-
-
-        } catch (Exception e) {
-            log.error("Connection to master failed: {}", e.getMessage(), e);
+        }catch (Exception e) {
+            throw new CustomBadRequestException(e.getMessage());
         }
     }
 

@@ -3,7 +3,7 @@ package uz.hikmatullo.loadtesting.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import uz.hikmatullo.loadtesting.exceptions.NotFoundException;
+import uz.hikmatullo.loadtesting.exceptions.CustomNotFoundException;
 import uz.hikmatullo.loadtesting.model.entity.WorkerNode;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
 import uz.hikmatullo.loadtesting.model.response.GroupInfoResponse;
@@ -33,7 +33,7 @@ public class NodeServiceImpl implements NodeService {
         log.info("Connection request from host={} for groupId={}", host, request.groupId());
 
         var group = groupRepository.findById(request.groupId())
-                .orElseThrow(() -> new NotFoundException("Group not found for id " + request.groupId()));
+                .orElseThrow(() -> new CustomNotFoundException("Group not found for id " + request.groupId()));
 
         WorkerNode node = new WorkerNode(request.groupId(), host);
         repository.saveWorkerNode(node);
@@ -47,7 +47,7 @@ public class NodeServiceImpl implements NodeService {
         List<WorkerNode> nodes = repository.findWorkerByGroupId(groupId);
         if (nodes.isEmpty()) {
             log.warn("No connected nodes found for groupId={}", groupId);
-            throw new NotFoundException("No connected nodes for group " + groupId);
+            throw new CustomNotFoundException("No connected nodes for group " + groupId);
         }
         log.info("Retrieved {} nodes for groupId={}", nodes.size(), groupId);
         return nodes.stream().map(this::toResponse).toList();

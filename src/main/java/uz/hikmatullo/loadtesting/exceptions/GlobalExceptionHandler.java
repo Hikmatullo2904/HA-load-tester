@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(CustomNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNotFound(NotFoundException ex) {
+    public String handleNotFound(CustomNotFoundException ex) {
         return ex.getMessage();
     }
 }
