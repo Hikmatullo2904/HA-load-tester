@@ -1,15 +1,15 @@
 package uz.hikmatullo.loadtesting.controller;
 
 import org.springframework.web.bind.annotation.*;
-import uz.hikmatullo.loadtesting.model.request.GroupCreateRequest;
-import uz.hikmatullo.loadtesting.model.request.GroupUpdateRequest;
-import uz.hikmatullo.loadtesting.model.response.GroupResponse;
+import uz.hikmatullo.loadtesting.model.request.ClusterCreateRequest;
+import uz.hikmatullo.loadtesting.model.request.ClusterUpdateRequest;
+import uz.hikmatullo.loadtesting.model.response.ClusterResponse;
 import uz.hikmatullo.loadtesting.service.interfaces.ClusterService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/groups")
+@RequestMapping("/api/v1/clusters")
 public class ClusterController {
 
     private final ClusterService clusterService;
@@ -20,27 +20,27 @@ public class ClusterController {
 
 
     @PostMapping
-    public GroupResponse create(@RequestBody GroupCreateRequest req) {
+    public ClusterResponse create(@RequestBody ClusterCreateRequest req) {
         return clusterService.create(req);
     }
 
     @GetMapping
-    public List<GroupResponse> getAll() {
+    public List<ClusterResponse> getAll() {
         return clusterService.getAll();
     }
 
     @GetMapping("/{id}")
-    public GroupResponse getById(@PathVariable String id) {
+    public ClusterResponse getById(@PathVariable String id) {
         return clusterService.getById(id);
     }
 
     @GetMapping("/connected")
-    public List<GroupResponse> getMyGroups() {
+    public List<ClusterResponse> getMyGroups() {
         return clusterService.getConnectedGroups();
     }
 
     @PutMapping("/{id}")
-    public GroupResponse update(@PathVariable String id, @RequestBody GroupUpdateRequest req) {
+    public ClusterResponse update(@PathVariable String id, @RequestBody ClusterUpdateRequest req) {
         return clusterService.update(id, req);
     }
 

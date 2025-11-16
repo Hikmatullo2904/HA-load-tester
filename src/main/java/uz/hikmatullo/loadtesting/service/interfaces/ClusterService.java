@@ -1,17 +1,17 @@
 package uz.hikmatullo.loadtesting.service.interfaces;
 
-import uz.hikmatullo.loadtesting.model.request.GroupCreateRequest;
-import uz.hikmatullo.loadtesting.model.request.GroupUpdateRequest;
-import uz.hikmatullo.loadtesting.model.response.GroupResponse;
+import uz.hikmatullo.loadtesting.model.request.ClusterCreateRequest;
+import uz.hikmatullo.loadtesting.model.request.ClusterUpdateRequest;
+import uz.hikmatullo.loadtesting.model.response.ClusterResponse;
 
 import java.util.List;
 
 public interface ClusterService {
-    GroupResponse create(GroupCreateRequest req);
-    List<GroupResponse> getAll();
-    GroupResponse getById(String id);
-    GroupResponse update(String id, GroupUpdateRequest req);
+    ClusterResponse create(ClusterCreateRequest req);
+    List<ClusterResponse> getAll();
+    ClusterResponse getById(String id);
+    ClusterResponse update(String id, ClusterUpdateRequest req);
     void delete(String id);
 
-    List<GroupResponse> getConnectedGroups();
+    List<ClusterResponse> getConnectedGroups();
 }

@@ -1,7 +1,7 @@
 package uz.hikmatullo.loadtesting.service.interfaces;
 
-import uz.hikmatullo.loadtesting.model.request.GroupMembershipRequest;
+import uz.hikmatullo.loadtesting.model.request.ClusterMembershipRequest;
 
 public interface ClusterMembershipService {
-    void connectToMaster(GroupMembershipRequest request);
+    void connectToMaster(ClusterMembershipRequest request);
 }

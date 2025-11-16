@@ -1,8 +1,8 @@
 package uz.hikmatullo.loadtesting.controller;
 
-import uz.hikmatullo.loadtesting.model.request.GroupMembershipRequest;
+import uz.hikmatullo.loadtesting.model.request.ClusterMembershipRequest;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
-import uz.hikmatullo.loadtesting.model.response.GroupInfoResponse;
+import uz.hikmatullo.loadtesting.model.response.ClusterInfoResponse;
 import uz.hikmatullo.loadtesting.model.response.NodeResponse;
 import uz.hikmatullo.loadtesting.service.interfaces.ClusterMembershipService;
 import uz.hikmatullo.loadtesting.service.interfaces.NodeService;
@@ -28,19 +28,19 @@ public class NodeController {
     * */
     @PostMapping("/add-worker")
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupInfoResponse connect(@RequestBody NodeConnectRequest request) {
+    public ClusterInfoResponse connect(@RequestBody NodeConnectRequest request) {
         return service.addWorkerNode(request);
     }
 
 
-    @GetMapping("/group/{groupId}")
-    public List<NodeResponse> getByGroup(@PathVariable String groupId) {
-        return service.getNodesByGroup(groupId);
+    @GetMapping("/cluster/{clusterId}")
+    public List<NodeResponse> getByGroup(@PathVariable String clusterId) {
+        return service.getNodesByGroup(clusterId);
     }
 
 
-    @PostMapping("/join-master")
-    public void connectToMaster(@RequestBody GroupMembershipRequest request) {
+    @PostMapping("/join-cluster")
+    public void connectToMaster(@RequestBody ClusterMembershipRequest request) {
         clusterMembershipService.connectToMaster(request);
     }
 

@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uz.hikmatullo.loadtesting.exceptions.CustomBadRequestException;
 import uz.hikmatullo.loadtesting.model.entity.ClusterMembership;
-import uz.hikmatullo.loadtesting.model.request.GroupMembershipRequest;
+import uz.hikmatullo.loadtesting.model.request.ClusterMembershipRequest;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
-import uz.hikmatullo.loadtesting.model.response.GroupInfoResponse;
+import uz.hikmatullo.loadtesting.model.response.ClusterInfoResponse;
 import uz.hikmatullo.loadtesting.repository.ClusterMembershipRepository;
 import uz.hikmatullo.loadtesting.service.interfaces.ClusterMembershipService;
 
@@ -27,7 +27,7 @@ public class ClusterMembershipServiceImpl implements ClusterMembershipService {
     }
 
     @Override
-    public void connectToMaster(GroupMembershipRequest request) {
+    public void connectToMaster(ClusterMembershipRequest request) {
 
         validateRequest(request);
 
@@ -38,10 +38,10 @@ public class ClusterMembershipServiceImpl implements ClusterMembershipService {
         HttpEntity<NodeConnectRequest> entity = new HttpEntity<>(req);
 
         try {
-            ResponseEntity<GroupInfoResponse> groupInfoResponseResponseEntity = restTemplate.postForEntity(url, entity, GroupInfoResponse.class);
+            ResponseEntity<ClusterInfoResponse> groupInfoResponseResponseEntity = restTemplate.postForEntity(url, entity, ClusterInfoResponse.class);
 
             if (groupInfoResponseResponseEntity.getStatusCode().is2xxSuccessful()) {
-                GroupInfoResponse groupInfo = groupInfoResponseResponseEntity.getBody();
+                ClusterInfoResponse groupInfo = groupInfoResponseResponseEntity.getBody();
                 if (groupInfo == null) {
                     log.error("Failed to connect to master. Group info is null");
                     throw new RuntimeException("Failed to connect to master. Group info is null");
@@ -59,7 +59,7 @@ public class ClusterMembershipServiceImpl implements ClusterMembershipService {
         }
     }
 
-    private void validateRequest(GroupMembershipRequest request) {
+    private void validateRequest(ClusterMembershipRequest request) {
         if (request.ip() == null || request.ip().isEmpty()) {
             throw new IllegalArgumentException("IP address is required");
         }

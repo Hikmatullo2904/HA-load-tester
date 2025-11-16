@@ -4,9 +4,9 @@ import org.springframework.stereotype.Service;
 import uz.hikmatullo.loadtesting.exceptions.CustomBadRequestException;
 import uz.hikmatullo.loadtesting.exceptions.CustomNotFoundException;
 import uz.hikmatullo.loadtesting.model.entity.Cluster;
-import uz.hikmatullo.loadtesting.model.request.GroupCreateRequest;
-import uz.hikmatullo.loadtesting.model.request.GroupUpdateRequest;
-import uz.hikmatullo.loadtesting.model.response.GroupResponse;
+import uz.hikmatullo.loadtesting.model.request.ClusterCreateRequest;
+import uz.hikmatullo.loadtesting.model.request.ClusterUpdateRequest;
+import uz.hikmatullo.loadtesting.model.response.ClusterResponse;
 import uz.hikmatullo.loadtesting.repository.ClusterRepository;
 import uz.hikmatullo.loadtesting.repository.ClusterMembershipRepository;
 import uz.hikmatullo.loadtesting.service.interfaces.ClusterService;
@@ -24,33 +24,33 @@ public class ClusterServiceImpl implements ClusterService {
         this.clusterMembershipRepository = clusterMembershipRepository;
     }
 
-    public GroupResponse create(GroupCreateRequest req) {
+    public ClusterResponse create(ClusterCreateRequest req) {
         validateGroupRequest(req);
         Cluster cluster = new Cluster(req.name(), req.description());
         repository.save(cluster);
         return toResponse(cluster);
     }
 
-    public List<GroupResponse> getAll() {
+    public List<ClusterResponse> getAll() {
         return repository.findAll().stream().map(this::toResponse).toList();
     }
 
-    public GroupResponse getById(String id) {
+    public ClusterResponse getById(String id) {
         Cluster cluster = repository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException("Group not found: " + id));
         return toResponse(cluster);
     }
 
     @Override
-    public List<GroupResponse> getConnectedGroups() {
+    public List<ClusterResponse> getConnectedGroups() {
         return clusterMembershipRepository.findAllMasterNodes().stream()
-                .map(n -> new GroupResponse(
+                .map(n -> new ClusterResponse(
                         n.getGroupId(), n.getGroupName(), n.getGroupDescription(), null
                 ))
                 .toList();
     }
 
-    public GroupResponse update(String id, GroupUpdateRequest req) {
+    public ClusterResponse update(String id, ClusterUpdateRequest req) {
         validateGroupUpdateRequest(req);
         Cluster cluster = repository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException("Group not found: " + id));
@@ -63,8 +63,8 @@ public class ClusterServiceImpl implements ClusterService {
         repository.deleteById(id);
     }
 
-    private GroupResponse toResponse(Cluster g) {
-        return new GroupResponse(
+    private ClusterResponse toResponse(Cluster g) {
+        return new ClusterResponse(
                 g.getId(),
                 g.getName(),
                 g.getDescription(),
@@ -72,14 +72,14 @@ public class ClusterServiceImpl implements ClusterService {
         );
     }
 
-    void validateGroupRequest(GroupCreateRequest req) {
+    void validateGroupRequest(ClusterCreateRequest req) {
         if (req.name() == null || req.name().isBlank()) {
             throw new CustomBadRequestException("Name cannot be blank");
         }
 
     }
 
-    void validateGroupUpdateRequest(GroupUpdateRequest req) {
+    void validateGroupUpdateRequest(ClusterUpdateRequest req) {
         if (req.name() == null || req.name().isBlank()) {
             throw new CustomBadRequestException("Name cannot be blank");
         }

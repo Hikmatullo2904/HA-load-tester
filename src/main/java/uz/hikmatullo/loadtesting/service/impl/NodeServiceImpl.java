@@ -7,7 +7,7 @@ import uz.hikmatullo.loadtesting.exceptions.CustomBadRequestException;
 import uz.hikmatullo.loadtesting.exceptions.CustomNotFoundException;
 import uz.hikmatullo.loadtesting.model.entity.WorkerNode;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
-import uz.hikmatullo.loadtesting.model.response.GroupInfoResponse;
+import uz.hikmatullo.loadtesting.model.response.ClusterInfoResponse;
 import uz.hikmatullo.loadtesting.model.response.NodeResponse;
 import uz.hikmatullo.loadtesting.repository.ClusterRepository;
 import uz.hikmatullo.loadtesting.repository.WorkerNodeRepository;
@@ -29,7 +29,7 @@ public class NodeServiceImpl implements NodeService {
     }
 
     @Override
-    public GroupInfoResponse addWorkerNode(NodeConnectRequest request) {
+    public ClusterInfoResponse addWorkerNode(NodeConnectRequest request) {
         validateConnectRequest(request);
         String host = Util.getCurrentRequestIp();
         log.info("Connection request from host={} for groupId={}", host, request.groupId());
@@ -41,7 +41,7 @@ public class NodeServiceImpl implements NodeService {
         repository.saveWorkerNode(node);
 
         log.info("Worker node {} connected successfully to group '{}'", host,  group.getName());
-        return new GroupInfoResponse(group.getId(), group.getName(), group.getDescription());
+        return new ClusterInfoResponse(group.getId(), group.getName(), group.getDescription());
     }
 
     private void validateConnectRequest(NodeConnectRequest request) {
