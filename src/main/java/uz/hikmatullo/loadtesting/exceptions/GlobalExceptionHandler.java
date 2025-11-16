@@ -47,4 +47,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ApiErrorResponse handleBadRequest(CustomBadRequestException ex) {
         return new ApiErrorResponse(ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ApiErrorResponse handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ApiErrorResponse(ex.getMessage());
+    }
+
+
+
 }

@@ -4,44 +4,49 @@ import org.springframework.web.bind.annotation.*;
 import uz.hikmatullo.loadtesting.model.request.GroupCreateRequest;
 import uz.hikmatullo.loadtesting.model.request.GroupUpdateRequest;
 import uz.hikmatullo.loadtesting.model.response.GroupResponse;
-import uz.hikmatullo.loadtesting.service.interfaces.GroupService;
+import uz.hikmatullo.loadtesting.service.interfaces.ClusterService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/groups")
-public class GroupController {
+public class ClusterController {
 
-    private final GroupService groupService;
+    private final ClusterService clusterService;
 
-    public GroupController(GroupService groupService) {
-        this.groupService = groupService;
+    public ClusterController(ClusterService clusterService) {
+        this.clusterService = clusterService;
     }
 
 
     @PostMapping
     public GroupResponse create(@RequestBody GroupCreateRequest req) {
-        return groupService.create(req);
+        return clusterService.create(req);
     }
 
     @GetMapping
     public List<GroupResponse> getAll() {
-        return groupService.getAll();
+        return clusterService.getAll();
     }
 
     @GetMapping("/{id}")
     public GroupResponse getById(@PathVariable String id) {
-        return groupService.getById(id);
+        return clusterService.getById(id);
+    }
+
+    @GetMapping("/connected")
+    public List<GroupResponse> getMyGroups() {
+        return clusterService.getConnectedGroups();
     }
 
     @PutMapping("/{id}")
     public GroupResponse update(@PathVariable String id, @RequestBody GroupUpdateRequest req) {
-        return groupService.update(id, req);
+        return clusterService.update(id, req);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable String id) {
-        groupService.delete(id);
+        clusterService.delete(id);
     }
 
 

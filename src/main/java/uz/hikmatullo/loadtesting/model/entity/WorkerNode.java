@@ -5,9 +5,9 @@ import java.util.UUID;
 
 public class WorkerNode {
     private final String id = UUID.randomUUID().toString();
-    private String groupId;
-    private String host;
-    private Instant connectedAt = Instant.now();
+    private final String groupId;
+    private final String host;
+    private final Instant connectedAt = Instant.now();
 
     public WorkerNode(String groupId, String host) {
         this.groupId = groupId;

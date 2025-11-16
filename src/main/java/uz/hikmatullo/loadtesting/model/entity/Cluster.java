@@ -1,10 +1,10 @@
 package uz.hikmatullo.loadtesting.model.entity;
 
-public class Group extends BaseEntity {
+public class Cluster extends BaseEntity {
     private String name;
     private String description;
 
-    public Group(String name, String description) {
+    public Cluster(String name, String description) {
         this.name = name;
         this.description = description;
     }

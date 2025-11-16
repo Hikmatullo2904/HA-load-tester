@@ -7,31 +7,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uz.hikmatullo.loadtesting.exceptions.CustomBadRequestException;
-import uz.hikmatullo.loadtesting.model.entity.MasterNode;
-import uz.hikmatullo.loadtesting.model.request.JoinMasterNodeGroupRequest;
+import uz.hikmatullo.loadtesting.model.entity.ClusterMembership;
+import uz.hikmatullo.loadtesting.model.request.GroupMembershipRequest;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
 import uz.hikmatullo.loadtesting.model.response.GroupInfoResponse;
-import uz.hikmatullo.loadtesting.repository.MasterNodeRepository;
-import uz.hikmatullo.loadtesting.service.interfaces.ConnectToMasterNodeService;
+import uz.hikmatullo.loadtesting.repository.ClusterMembershipRepository;
+import uz.hikmatullo.loadtesting.service.interfaces.ClusterMembershipService;
 
 @Service
-public class ConnectToMasterNodeServiceImpl implements ConnectToMasterNodeService {
+public class ClusterMembershipServiceImpl implements ClusterMembershipService {
 
-    private static final Logger log = LoggerFactory.getLogger(ConnectToMasterNodeServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ClusterMembershipServiceImpl.class);
     private final RestTemplate restTemplate;
-    private final MasterNodeRepository masterNodeRepository;
+    private final ClusterMembershipRepository clusterMembershipRepository;
 
-    public ConnectToMasterNodeServiceImpl(RestTemplate restTemplate, MasterNodeRepository masterNodeRepository) {
+    public ClusterMembershipServiceImpl(RestTemplate restTemplate, ClusterMembershipRepository clusterMembershipRepository) {
         this.restTemplate = restTemplate;
-        this.masterNodeRepository = masterNodeRepository;
+        this.clusterMembershipRepository = clusterMembershipRepository;
     }
 
     @Override
-    public void connectToMaster(JoinMasterNodeGroupRequest request) {
+    public void connectToMaster(GroupMembershipRequest request) {
 
         validateRequest(request);
 
-        String url = "http://" + request.ip() + ":" + request.port() + "/api/nodes/connect";
+        String url = "http://" + request.ip() + ":" + request.port() + "/api/v1/nodes/add-worker";
         log.info("Connecting to master={} groupId={} ...", url, request.groupId());
 
         NodeConnectRequest req = new NodeConnectRequest(request.groupId());
@@ -46,10 +46,10 @@ public class ConnectToMasterNodeServiceImpl implements ConnectToMasterNodeServic
                     log.error("Failed to connect to master. Group info is null");
                     throw new RuntimeException("Failed to connect to master. Group info is null");
                 }
-                MasterNode masterNode = new MasterNode(request.ip(), request.port(), groupInfo.groupId(), groupInfo.groupName());
-                masterNodeRepository.saveMasterNode(masterNode);
+                ClusterMembership clusterMembership = new ClusterMembership(request.ip(), request.port(), groupInfo.id(), groupInfo.name(), groupInfo.description());
+                clusterMembershipRepository.saveMasterNode(clusterMembership);
 
-                log.info("Successfully connected to master group='{}' ({})", groupInfo.groupName(), groupInfo.groupId());
+                log.info("Successfully connected to master group='{}' ({})", groupInfo.name(), groupInfo.id());
             } else {
                 log.error("Failed to connect to master. HTTP status: {} body: {}", groupInfoResponseResponseEntity.getStatusCode(), groupInfoResponseResponseEntity.getBody());
                 throw new CustomBadRequestException("Failed to connect master");
@@ -59,7 +59,7 @@ public class ConnectToMasterNodeServiceImpl implements ConnectToMasterNodeServic
         }
     }
 
-    private void validateRequest(JoinMasterNodeGroupRequest request) {
+    private void validateRequest(GroupMembershipRequest request) {
         if (request.ip() == null || request.ip().isEmpty()) {
             throw new IllegalArgumentException("IP address is required");
         }

@@ -3,29 +3,32 @@ package uz.hikmatullo.loadtesting.service.impl;
 import org.springframework.stereotype.Service;
 import uz.hikmatullo.loadtesting.exceptions.CustomBadRequestException;
 import uz.hikmatullo.loadtesting.exceptions.CustomNotFoundException;
-import uz.hikmatullo.loadtesting.model.entity.Group;
+import uz.hikmatullo.loadtesting.model.entity.Cluster;
 import uz.hikmatullo.loadtesting.model.request.GroupCreateRequest;
 import uz.hikmatullo.loadtesting.model.request.GroupUpdateRequest;
 import uz.hikmatullo.loadtesting.model.response.GroupResponse;
-import uz.hikmatullo.loadtesting.repository.GroupRepository;
-import uz.hikmatullo.loadtesting.service.interfaces.GroupService;
+import uz.hikmatullo.loadtesting.repository.ClusterRepository;
+import uz.hikmatullo.loadtesting.repository.ClusterMembershipRepository;
+import uz.hikmatullo.loadtesting.service.interfaces.ClusterService;
 
 import java.util.List;
 
 @Service
-public class GroupServiceImpl implements GroupService {
+public class ClusterServiceImpl implements ClusterService {
 
-    private final GroupRepository repository;
+    private final ClusterRepository repository;
+    private final ClusterMembershipRepository clusterMembershipRepository;
 
-    public GroupServiceImpl(GroupRepository repository) {
+    public ClusterServiceImpl(ClusterRepository repository, ClusterMembershipRepository clusterMembershipRepository) {
         this.repository = repository;
+        this.clusterMembershipRepository = clusterMembershipRepository;
     }
 
     public GroupResponse create(GroupCreateRequest req) {
         validateGroupRequest(req);
-        Group group = new Group(req.name(), req.description());
-        repository.save(group);
-        return toResponse(group);
+        Cluster cluster = new Cluster(req.name(), req.description());
+        repository.save(cluster);
+        return toResponse(cluster);
     }
 
     public List<GroupResponse> getAll() {
@@ -33,25 +36,34 @@ public class GroupServiceImpl implements GroupService {
     }
 
     public GroupResponse getById(String id) {
-        Group group = repository.findById(id)
+        Cluster cluster = repository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException("Group not found: " + id));
-        return toResponse(group);
+        return toResponse(cluster);
+    }
+
+    @Override
+    public List<GroupResponse> getConnectedGroups() {
+        return clusterMembershipRepository.findAllMasterNodes().stream()
+                .map(n -> new GroupResponse(
+                        n.getGroupId(), n.getGroupName(), n.getGroupDescription(), null
+                ))
+                .toList();
     }
 
     public GroupResponse update(String id, GroupUpdateRequest req) {
         validateGroupUpdateRequest(req);
-        Group group = repository.findById(id)
+        Cluster cluster = repository.findById(id)
                 .orElseThrow(() -> new CustomNotFoundException("Group not found: " + id));
-        group.setName(req.name());
-        group.setDescription(req.description());
-        return toResponse(group);
+        cluster.setName(req.name());
+        cluster.setDescription(req.description());
+        return toResponse(cluster);
     }
 
     public void delete(String id) {
         repository.deleteById(id);
     }
 
-    private GroupResponse toResponse(Group g) {
+    private GroupResponse toResponse(Cluster g) {
         return new GroupResponse(
                 g.getId(),
                 g.getName(),

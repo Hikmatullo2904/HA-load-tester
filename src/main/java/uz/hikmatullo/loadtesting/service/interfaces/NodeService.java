@@ -6,6 +6,6 @@ import uz.hikmatullo.loadtesting.model.response.NodeResponse;
 import java.util.List;
 
 public interface NodeService {
-    GroupInfoResponse receiveConnection(NodeConnectRequest request);
+    GroupInfoResponse addWorkerNode(NodeConnectRequest request);
     List<NodeResponse> getNodesByGroup(String groupId);
 }
