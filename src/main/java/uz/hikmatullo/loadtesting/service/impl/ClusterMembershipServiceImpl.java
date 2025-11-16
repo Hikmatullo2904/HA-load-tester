@@ -2,17 +2,18 @@ package uz.hikmatullo.loadtesting.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uz.hikmatullo.loadtesting.exceptions.CustomBadRequestException;
+import uz.hikmatullo.loadtesting.mapper.ClusterMembershipMapper;
 import uz.hikmatullo.loadtesting.model.entity.ClusterMembership;
 import uz.hikmatullo.loadtesting.model.request.ClusterMembershipRequest;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
 import uz.hikmatullo.loadtesting.model.response.ClusterInfoResponse;
 import uz.hikmatullo.loadtesting.repository.ClusterMembershipRepository;
 import uz.hikmatullo.loadtesting.service.interfaces.ClusterMembershipService;
+import uz.hikmatullo.loadtesting.validators.ClusterMembershipValidator;
 
 @Service
 public class ClusterMembershipServiceImpl implements ClusterMembershipService {
@@ -20,55 +21,54 @@ public class ClusterMembershipServiceImpl implements ClusterMembershipService {
     private static final Logger log = LoggerFactory.getLogger(ClusterMembershipServiceImpl.class);
     private final RestTemplate restTemplate;
     private final ClusterMembershipRepository clusterMembershipRepository;
+    private final ClusterMembershipValidator validator;
 
-    public ClusterMembershipServiceImpl(RestTemplate restTemplate, ClusterMembershipRepository clusterMembershipRepository) {
+    public ClusterMembershipServiceImpl(RestTemplate restTemplate, ClusterMembershipRepository clusterMembershipRepository, ClusterMembershipValidator validator) {
         this.restTemplate = restTemplate;
         this.clusterMembershipRepository = clusterMembershipRepository;
+        this.validator = validator;
     }
 
     @Override
-    public void connectToMaster(ClusterMembershipRequest request) {
+    public void connectToCluster(ClusterMembershipRequest request) {
 
-        validateRequest(request);
+        validator.validate(request);
 
-        String url = "http://" + request.ip() + ":" + request.port() + "/api/v1/nodes/add-worker";
-        log.info("Connecting to master={} groupId={} ...", url, request.groupId());
+        log.info("Attempting to join cluster clusterId={} at {}:{}",
+                request.clusterId(), request.ip(), request.port());
 
-        NodeConnectRequest req = new NodeConnectRequest(request.groupId());
-        HttpEntity<NodeConnectRequest> entity = new HttpEntity<>(req);
+        ClusterInfoResponse response = registerWorker(request);
+
+        ClusterMembership membership = ClusterMembershipMapper.toEntity(request, response);
+
+        clusterMembershipRepository.saveMasterNode(membership);
+
+        log.info("Connected to cluster='{}' ({})", response.name(), response.id());
+    }
+
+    public ClusterInfoResponse registerWorker(ClusterMembershipRequest request) {
+
+        String url = buildUrl(request);
+
+        NodeConnectRequest connectRequest = new NodeConnectRequest(request.clusterId());
 
         try {
-            ResponseEntity<ClusterInfoResponse> groupInfoResponseResponseEntity = restTemplate.postForEntity(url, entity, ClusterInfoResponse.class);
+            ResponseEntity<ClusterInfoResponse> response =
+                    restTemplate.postForEntity(url, connectRequest, ClusterInfoResponse.class);
 
-            if (groupInfoResponseResponseEntity.getStatusCode().is2xxSuccessful()) {
-                ClusterInfoResponse groupInfo = groupInfoResponseResponseEntity.getBody();
-                if (groupInfo == null) {
-                    log.error("Failed to connect to master. Group info is null");
-                    throw new RuntimeException("Failed to connect to master. Group info is null");
-                }
-                ClusterMembership clusterMembership = new ClusterMembership(request.ip(), request.port(), groupInfo.id(), groupInfo.name(), groupInfo.description());
-                clusterMembershipRepository.saveMasterNode(clusterMembership);
-
-                log.info("Successfully connected to master group='{}' ({})", groupInfo.name(), groupInfo.id());
-            } else {
-                log.error("Failed to connect to master. HTTP status: {} body: {}", groupInfoResponseResponseEntity.getStatusCode(), groupInfoResponseResponseEntity.getBody());
-                throw new CustomBadRequestException("Failed to connect master");
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                throw new CustomBadRequestException("Coordinator returned invalid response");
             }
-        }catch (Exception e) {
-            throw new CustomBadRequestException(e.getMessage());
+
+            return response.getBody();
+
+        } catch (Exception ex) {
+            throw new CustomBadRequestException("Unable to connect to coordinator: " + ex.getMessage());
         }
     }
 
-    private void validateRequest(ClusterMembershipRequest request) {
-        if (request.ip() == null || request.ip().isEmpty()) {
-            throw new IllegalArgumentException("IP address is required");
-        }
-        if (request.port() <= 0) {
-            throw new IllegalArgumentException("Port must be greater than 0");
-        }
-        if (request.groupId() == null || request.groupId().isEmpty()) {
-            throw new IllegalArgumentException("Group ID is required");
-        }
+    private String buildUrl(ClusterMembershipRequest request) {
+        return "http://" + request.ip() + ":" + request.port() + "/api/v1/nodes/add-worker";
     }
 
 

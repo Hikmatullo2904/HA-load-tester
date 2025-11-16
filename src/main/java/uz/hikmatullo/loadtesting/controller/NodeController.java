@@ -41,7 +41,7 @@ public class NodeController {
 
     @PostMapping("/join-cluster")
     public void connectToMaster(@RequestBody ClusterMembershipRequest request) {
-        clusterMembershipService.connectToMaster(request);
+        clusterMembershipService.connectToCluster(request);
     }
 
 

@@ -45,7 +45,7 @@ public class ClusterServiceImpl implements ClusterService {
     public List<ClusterResponse> getConnectedGroups() {
         return clusterMembershipRepository.findAllMasterNodes().stream()
                 .map(n -> new ClusterResponse(
-                        n.getGroupId(), n.getGroupName(), n.getGroupDescription(), null
+                        n.getClusterId(), n.getClusterName(), n.getClusterDescription(), null
                 ))
                 .toList();
     }

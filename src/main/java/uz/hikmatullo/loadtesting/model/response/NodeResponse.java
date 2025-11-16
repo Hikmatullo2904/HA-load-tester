@@ -4,7 +4,7 @@ import java.time.Instant;
 
 public record NodeResponse(
         String id,
-        String groupId,
+        String clusterId,
         String host,
         Instant connectedAt
 ) {}

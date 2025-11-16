@@ -3,32 +3,32 @@ package uz.hikmatullo.loadtesting.model.entity;
 public class ClusterMembership {
     private String ip;
     private int port;
-    private String groupId;
-    private String groupName;
-    private String groupDescription;
+    private String clusterId;
+    private String clusterName;
+    private String clusterDescription;
 
-    public ClusterMembership(String ip, int port, String groupId, String groupName, String groupDescription) {
+    public ClusterMembership(String ip, int port, String clusterId, String clusterName, String clusterDescription) {
         this.ip = ip;
         this.port = port;
-        this.groupId = groupId;
-        this.groupName = groupName;
-        this.groupDescription = groupDescription;
+        this.clusterId = clusterId;
+        this.clusterName = clusterName;
+        this.clusterDescription = clusterDescription;
     }
 
     public String getIp() { return ip; }
     public int getPort() { return port; }
-    public String getGroupId() { return groupId; }
-    public String getGroupName() { return groupName; }
+    public String getClusterId() { return clusterId; }
+    public String getClusterName() { return clusterName; }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
     }
 
-    public String getGroupDescription() {
-        return groupDescription;
+    public String getClusterDescription() {
+        return clusterDescription;
     }
 
-    public void setGroupDescription(String groupDescription) {
-        this.groupDescription = groupDescription;
+    public void setClusterDescription(String clusterDescription) {
+        this.clusterDescription = clusterDescription;
     }
 }
