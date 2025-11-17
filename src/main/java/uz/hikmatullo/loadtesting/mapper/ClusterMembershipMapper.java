@@ -7,13 +7,14 @@ import uz.hikmatullo.loadtesting.model.response.ClusterInfoResponse;
 public class ClusterMembershipMapper {
 
     public static ClusterMembership toEntity(ClusterMembershipRequest req, ClusterInfoResponse info) {
-        return new ClusterMembership(
-                req.ip(),
-                req.port(),
-                info.id(),
-                info.name(),
-                info.description()
-        );
+        ClusterMembership membership = new ClusterMembership();
+        membership.setIp(req.ip());
+        membership.setPort(req.port());
+        membership.setClusterId(info.id());
+        membership.setClusterName(info.name());
+        membership.setClusterDescription(info.description());
+        membership.setGivenWorkerId(info.givenWorkerId());
+        return membership;
     }
 
 }

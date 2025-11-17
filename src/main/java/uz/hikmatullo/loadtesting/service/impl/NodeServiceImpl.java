@@ -36,24 +36,27 @@ public class NodeServiceImpl implements NodeService {
     public ClusterInfoResponse addWorkerNode(NodeConnectRequest request) {
         nodeValidator.validateConnectRequest(request);
 
-        String host = Util.getCurrentRequestIp();
-        log.info("Connection request from host={} for clusterId={}", host, request.clusterId());
+        String currentRequestIp = Util.getCurrentRequestIp();
+        log.info("Connection request from host={} for clusterId={}", currentRequestIp, request.clusterId());
 
         //Checking if the host is already connected to a group
-        Optional<WorkerNode> existingNode = repository.findByHost(host);
+        Optional<WorkerNode> existingNode = repository.findByIp(currentRequestIp);
         if (existingNode.isPresent()) {
-            log.info("Host {} is already connected to group '{}'", host, existingNode.get().getClusterId());
-            return new ClusterInfoResponse(existingNode.get().getClusterId(), existingNode.get().getClusterId(), existingNode.get().getClusterId());
+            log.info("Host {} is already connected to group '{}'", currentRequestIp, existingNode.get().getClusterId());
+            return new ClusterInfoResponse(existingNode.get().getClusterId(),
+                    existingNode.get().getClusterId(),
+                    existingNode.get().getClusterId(),
+                    existingNode.get().getId());
         }
 
-        var group = clusterRepository.findById(request.clusterId())
+        var cluster = clusterRepository.findById(request.clusterId())
                 .orElseThrow(() -> new CustomNotFoundException("Group not found for id " + request.clusterId()));
 
-        WorkerNode node = new WorkerNode(request.clusterId(), host);
+        WorkerNode node = new WorkerNode(request.clusterId(), currentRequestIp);
         repository.saveWorkerNode(node);
 
-        log.info("Worker node {} connected successfully to group '{}'", host,  group.getName());
-        return new ClusterInfoResponse(group.getId(), group.getName(), group.getDescription());
+        log.info("Worker node {} connected successfully to group '{}'", currentRequestIp,  cluster.getName());
+        return new ClusterInfoResponse(cluster.getId(), cluster.getName(), cluster.getDescription(), node.getId());
     }
 
     @Override

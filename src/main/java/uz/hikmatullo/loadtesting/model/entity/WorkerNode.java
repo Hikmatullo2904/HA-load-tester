@@ -1,21 +1,25 @@
 package uz.hikmatullo.loadtesting.model.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import uz.hikmatullo.loadtesting.model.enums.WorkerStatusEnum;
+
 import java.time.Instant;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class WorkerNode {
-    private final String id = UUID.randomUUID().toString();
-    private final String clusterId;
-    private final String host;
-    private final Instant connectedAt = Instant.now();
+    private String id = UUID.randomUUID().toString();
+    private String clusterId;
+    private String ip;
+    private Instant connectedAt = Instant.now();
+    private WorkerStatusEnum status;
+    private Instant lastHeartbeat;
 
-    public WorkerNode(String clusterId, String host) {
+    public WorkerNode(String clusterId, String ip) {
         this.clusterId = clusterId;
-        this.host = host;
+        this.ip = ip;
     }
 
-    public String getId() { return id; }
-    public String getClusterId() { return clusterId; }
-    public String getHost() { return host; }
-    public Instant getConnectedAt() { return connectedAt; }
 }

@@ -23,10 +23,10 @@ public class WorkerNodeRepository {
         return worderNodesByGroup;
     }
 
-    public Optional<WorkerNode> findByHost(String host) {
+    public Optional<WorkerNode> findByIp(String ip) {
         return worderNodesByGroup.values().stream()
                 .flatMap(List::stream)
-                .filter(node -> node.getHost().equals(host))
+                .filter(node -> node.getIp().equals(ip))
                 .findFirst();
     }
 }

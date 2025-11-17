@@ -5,6 +5,6 @@ import uz.hikmatullo.loadtesting.model.response.NodeResponse;
 
 public class NodeMapper {
     public static NodeResponse toResponse(WorkerNode node) {
-        return new NodeResponse(node.getId(), node.getClusterId(), node.getHost(), node.getConnectedAt());
+        return new NodeResponse(node.getId(), node.getClusterId(), node.getIp(), node.getConnectedAt());
     }
 }
