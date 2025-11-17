@@ -2,6 +2,7 @@ package uz.hikmatullo.loadtesting.service.impl;
 
 import org.springframework.stereotype.Service;
 import uz.hikmatullo.loadtesting.model.entity.WorkerStatus;
+import uz.hikmatullo.loadtesting.model.enums.WorkerStatusEnum;
 import uz.hikmatullo.loadtesting.model.request.HeartbeatRequest;
 import uz.hikmatullo.loadtesting.repository.WorkerStatusRepository;
 
@@ -18,8 +19,9 @@ public class HeartbeatService {
     }
 
     public void updateHeartbeat(HeartbeatRequest req) {
-        workerStatusRepository.save(req.clusterId(),
+        workerStatusRepository.save(req.workerId(),
                 WorkerStatus.builder()
+                        .status(WorkerStatusEnum.ALIVE)
                         .lastHeartbeat(Instant.now())
                         .cpuLoad(req.cpuLoad())
                         .freeMemory(req.freeMemory())
@@ -30,5 +32,9 @@ public class HeartbeatService {
 
     public Map<String, WorkerStatus> getWorkerStatuses() {
         return workerStatusRepository.findAll();
+    }
+
+    public void createHeartbeat(HeartbeatRequest build) {
+        updateHeartbeat(build);
     }
 }

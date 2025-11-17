@@ -15,11 +15,11 @@ public class WorkerNode {
     private String ip;
     private Instant connectedAt = Instant.now();
     private WorkerStatusEnum status;
-    private Instant lastHeartbeat;
 
     public WorkerNode(String clusterId, String ip) {
         this.clusterId = clusterId;
         this.ip = ip;
+        this.status = WorkerStatusEnum.ALIVE;
     }
 
 }

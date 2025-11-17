@@ -3,7 +3,7 @@ package uz.hikmatullo.loadtesting.controller;
 import uz.hikmatullo.loadtesting.model.request.ClusterMembershipRequest;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
 import uz.hikmatullo.loadtesting.model.response.ClusterInfoResponse;
-import uz.hikmatullo.loadtesting.model.response.NodeResponse;
+import uz.hikmatullo.loadtesting.model.response.WorkerNodeResponse;
 import uz.hikmatullo.loadtesting.service.interfaces.ClusterMembershipService;
 import uz.hikmatullo.loadtesting.service.interfaces.NodeService;
 
@@ -34,8 +34,8 @@ public class NodeController {
 
 
     @GetMapping("/cluster/{clusterId}")
-    public List<NodeResponse> getByGroup(@PathVariable String clusterId) {
-        return service.getNodesByGroup(clusterId);
+    public List<WorkerNodeResponse> getByGroup(@PathVariable String clusterId) {
+        return service.getNodesByCluster(clusterId);
     }
 
 
