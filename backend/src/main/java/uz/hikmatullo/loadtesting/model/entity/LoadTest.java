@@ -5,6 +5,7 @@ import uz.hikmatullo.loadtesting.model.enums.LoadTestStatus;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ import java.util.List;
 @Builder
 public class LoadTest {
 
-    private String id;
+    private String id = UUID.randomUUID().toString();
 
     private String name;
     private String description;

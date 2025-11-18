@@ -20,8 +20,5 @@ public class WorkerStatus {
     private double cpuLoad;
     private long freeMemory;
     private int activeTasks;
-
     private WorkerStatusEnum status;
-
-
 }

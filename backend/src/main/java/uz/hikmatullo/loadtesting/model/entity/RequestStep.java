@@ -3,7 +3,7 @@ package uz.hikmatullo.loadtesting.model.entity;
 import lombok.*;
 import uz.hikmatullo.loadtesting.model.enums.HttpMethod;
 
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -12,15 +12,17 @@ import java.util.Map;
 @Builder
 public class RequestStep {
 
-    private String id;
+    private String id = UUID.randomUUID().toString();
 
     private String name;
     private HttpMethod method;
     private String url;
     private String body;
 
-    private Map<String, String> headers;
-    private Map<String, String> queryParams;
+    private Map<String, String> headers = new HashMap<>();
+    private Map<String, String> queryParams = new HashMap<>();
 
     private int timeoutMs;
+
+    private List<ExtractionRule> extract = new ArrayList<>();
 }

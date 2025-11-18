@@ -9,7 +9,6 @@ import uz.hikmatullo.loadtesting.model.enums.ValidationType;
 @AllArgsConstructor
 @Builder
 public class ValidationRule {
-
     private ValidationType type;
     private String expectedValue;
 }
