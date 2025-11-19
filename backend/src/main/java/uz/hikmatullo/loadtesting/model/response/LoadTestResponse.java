@@ -14,9 +14,9 @@ public record LoadTestResponse (
         String id,
         String name,
         String description,
-        LoadProfile profile,
-        List<RequestStep>steps,
-        List<ValidationRule> validations,
+        LoadProfileResponse profile,
+        List<RequestStepResponse> steps,
+        List<ValidationRuleResponse> validationRules,
         Instant createdAt,
         LoadTestStatus status
 ) {

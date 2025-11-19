@@ -1,11 +1,8 @@
 package uz.hikmatullo.loadtesting.model.response;
 
 import lombok.Builder;
-import uz.hikmatullo.loadtesting.model.entity.ExtractionRule;
 import uz.hikmatullo.loadtesting.model.enums.HttpMethod;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +16,6 @@ public record RequestStepResponse(
         Map<String, String> headers,
         Map<String, String> queryParams,
         int timeoutMs,
-        List<ExtractionRule> extract
+        List<ExtractionRuleResponse> extractionRules
 ) {
 }

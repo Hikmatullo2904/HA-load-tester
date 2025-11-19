@@ -24,5 +24,5 @@ public class RequestStep {
 
     private int timeoutMs;
 
-    private List<ExtractionRule> extract = new ArrayList<>();
+    private List<ExtractionRule> extractionRules = new ArrayList<>();
 }

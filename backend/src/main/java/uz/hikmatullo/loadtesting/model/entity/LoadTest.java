@@ -21,7 +21,7 @@ public class LoadTest {
 
     private LoadProfile profile;
     private List<RequestStep> steps;
-    private List<ValidationRule> validations;
+    private List<ValidationRule> validationRules;
 
     private Instant createdAt;
     private LoadTestStatus status;
