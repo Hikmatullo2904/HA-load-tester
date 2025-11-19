@@ -1,4 +1,4 @@
-package uz.hikmatullo.loadtesting.service.worker;
+package uz.hikmatullo.loadtesting.service.heartbeat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

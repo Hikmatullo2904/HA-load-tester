@@ -1,14 +1,12 @@
 package uz.hikmatullo.loadtesting.controller;
 
+import org.springframework.web.bind.annotation.*;
 import uz.hikmatullo.loadtesting.model.request.ClusterMembershipRequest;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
 import uz.hikmatullo.loadtesting.model.response.ClusterInfoResponse;
 import uz.hikmatullo.loadtesting.model.response.WorkerNodeResponse;
 import uz.hikmatullo.loadtesting.service.interfaces.ClusterMembershipService;
 import uz.hikmatullo.loadtesting.service.interfaces.NodeService;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,7 +25,6 @@ public class NodeController {
     * This method accepts connection request from worker nodes
     * */
     @PostMapping("/add-worker")
-    @ResponseStatus(HttpStatus.CREATED)
     public ClusterInfoResponse connect(@RequestBody NodeConnectRequest request) {
         return service.addWorkerNode(request);
     }

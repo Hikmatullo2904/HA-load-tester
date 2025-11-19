@@ -1,4 +1,4 @@
-package uz.hikmatullo.loadtesting.service.worker;
+package uz.hikmatullo.loadtesting.service.heartbeat;
 
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,10 @@
 package uz.hikmatullo.loadtesting.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import uz.hikmatullo.loadtesting.model.request.HeartbeatRequest;
 import uz.hikmatullo.loadtesting.service.impl.HeartbeatService;
 
@@ -16,8 +19,8 @@ public class HeartbeatController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void receiveHeartbeat(@RequestBody HeartbeatRequest request) {
+    public ResponseEntity<Void> receiveHeartbeat(@RequestBody HeartbeatRequest request) {
         heartbeatService.updateHeartbeat(request);
+        return ResponseEntity.ok().build();
     }
 }
