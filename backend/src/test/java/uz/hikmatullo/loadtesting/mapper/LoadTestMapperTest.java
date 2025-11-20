@@ -49,6 +49,8 @@ class LoadTestMapperTest {
                 "200"
         );
 
+        Instant startAt = Instant.now();
+
         LoadTestRequest request = new LoadTestRequest(
                 "Test Name",
                 "Test Description",
@@ -56,7 +58,8 @@ class LoadTestMapperTest {
                 List.of(stepReq),
                 List.of(validationReq),
                 now,
-                LoadTestStatus.DRAFT
+                LoadTestStatus.DRAFT,
+                startAt
         );
 
         // ----- Act -----
@@ -68,6 +71,7 @@ class LoadTestMapperTest {
         assertEquals("Test Description", entity.getDescription());
         assertEquals(now, entity.getCreatedAt());
         assertEquals(LoadTestStatus.DRAFT, entity.getStatus());
+        assertEquals(startAt, entity.getStartAt());
 
         // PROFILE
         LoadProfile profile = entity.getProfile();
@@ -138,6 +142,7 @@ class LoadTestMapperTest {
                 .expectedValue("500")
                 .build();
 
+        Instant startAt = Instant.now();
         LoadTest test = LoadTest.builder()
                 .id("test-1")
                 .name("Spike Test")
@@ -147,6 +152,7 @@ class LoadTestMapperTest {
                 .validationRules(List.of(validationRule))
                 .createdAt(Instant.now())
                 .status(LoadTestStatus.RUNNING)
+                .startAt(startAt)
                 .build();
 
         // ----- Act -----
@@ -158,6 +164,7 @@ class LoadTestMapperTest {
         assertEquals("Spike Test", response.name());
         assertEquals("Testing spike load", response.description());
         assertEquals(LoadTestStatus.RUNNING, response.status());
+        assertEquals(startAt, response.startAt());
 
         // PROFILE RESPONSE
         LoadProfileResponse respProfile = response.profile();

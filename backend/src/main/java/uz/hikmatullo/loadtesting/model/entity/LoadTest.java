@@ -25,4 +25,5 @@ public class LoadTest {
 
     private Instant createdAt;
     private LoadTestStatus status;
+    private Instant startAt;
 }

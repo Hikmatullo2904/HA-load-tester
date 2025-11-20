@@ -18,6 +18,7 @@ public class LoadTestMapper {
                 .validationRules(toValidationRules(request.validationRules()))
                 .createdAt(request.createdAt())
                 .status(request.status())
+                .startAt(request.startAt())
                 .build();
     }
 
@@ -88,6 +89,7 @@ public class LoadTestMapper {
                 .validationRules(toValidationRuleResponses(entity.getValidationRules()))
                 .createdAt(entity.getCreatedAt())
                 .status(entity.getStatus())
+                .startAt(entity.getStartAt())
                 .build();
     }
 

@@ -18,6 +18,7 @@ public record LoadTestResponse (
         List<RequestStepResponse> steps,
         List<ValidationRuleResponse> validationRules,
         Instant createdAt,
-        LoadTestStatus status
+        LoadTestStatus status,
+        Instant startAt
 ) {
 }
