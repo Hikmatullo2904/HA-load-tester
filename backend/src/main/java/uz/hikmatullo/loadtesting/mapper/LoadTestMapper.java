@@ -2,9 +2,11 @@ package uz.hikmatullo.loadtesting.mapper;
 
 
 import uz.hikmatullo.loadtesting.model.entity.*;
+import uz.hikmatullo.loadtesting.model.enums.LoadTestStatus;
 import uz.hikmatullo.loadtesting.model.request.*;
 import uz.hikmatullo.loadtesting.model.response.*;
 
+import java.time.Instant;
 import java.util.List;
 
 public class LoadTestMapper {
@@ -16,9 +18,9 @@ public class LoadTestMapper {
                 .profile(toEntity(request.profile()))
                 .steps(toRequestSteps(request.steps()))
                 .validationRules(toValidationRules(request.validationRules()))
-                .createdAt(request.createdAt())
-                .status(request.status())
                 .startAt(request.startAt())
+                .createdAt(Instant.now())
+                .status(LoadTestStatus.DRAFT)
                 .build();
     }
 
@@ -95,6 +97,7 @@ public class LoadTestMapper {
 
     public static LoadProfileResponse toProfileResponse(LoadProfile profile) {
         return LoadProfileResponse.builder()
+                .id(profile.getId())
                 .type(profile.getType())
                 .virtualUsers(profile.getVirtualUsers())
                 .durationSeconds(profile.getDurationSeconds())

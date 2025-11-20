@@ -57,8 +57,6 @@ class LoadTestMapperTest {
                 profileReq,
                 List.of(stepReq),
                 List.of(validationReq),
-                now,
-                LoadTestStatus.DRAFT,
                 startAt
         );
 

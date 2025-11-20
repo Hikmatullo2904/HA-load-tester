@@ -11,8 +11,6 @@ public record LoadTestRequest(
         LoadProfileRequest profile,
         List<RequestStepRequest> steps,
         List<ValidationRuleRequest> validationRules,
-        Instant createdAt,
-        LoadTestStatus status,
         Instant startAt
 ) {
 }

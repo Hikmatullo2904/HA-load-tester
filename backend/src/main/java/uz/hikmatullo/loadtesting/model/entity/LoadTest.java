@@ -14,6 +14,7 @@ import java.util.UUID;
 @Builder
 public class LoadTest {
 
+    @Builder.Default
     private String id = UUID.randomUUID().toString();
 
     private String name;
@@ -23,7 +24,7 @@ public class LoadTest {
     private List<RequestStep> steps;
     private List<ValidationRule> validationRules;
 
-    private Instant createdAt;
+    private Instant createdAt = Instant.now();
     private LoadTestStatus status;
     private Instant startAt;
 }

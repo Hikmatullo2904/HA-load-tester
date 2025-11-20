@@ -12,6 +12,7 @@ import java.util.*;
 @Builder
 public class RequestStep {
 
+    @Builder.Default
     private String id = UUID.randomUUID().toString();
 
     private String name;

@@ -8,6 +8,7 @@ import uz.hikmatullo.loadtesting.model.request.LoadTestRequest;
 import uz.hikmatullo.loadtesting.model.response.LoadTestResponse;
 import uz.hikmatullo.loadtesting.repository.LoadTestRepository;
 import uz.hikmatullo.loadtesting.service.interfaces.LoadTestService;
+import uz.hikmatullo.loadtesting.validators.LoadTestValidator;
 
 import java.util.List;
 
@@ -16,14 +17,17 @@ import java.util.List;
 public class LoadTestServiceImpl implements LoadTestService {
 
     private final LoadTestRepository repository;
+    private final LoadTestValidator loadTestValidator;
 
-    public LoadTestServiceImpl(LoadTestRepository repository) {
+    public LoadTestServiceImpl(LoadTestRepository repository, LoadTestValidator loadTestValidator) {
         this.repository = repository;
+        this.loadTestValidator = loadTestValidator;
     }
 
     @Override
     public LoadTestResponse create(LoadTestRequest request) {
         log.info("Creating LoadTest: name={}, description={}", request.name(), request.description());
+        loadTestValidator.validateForCreate(request);
 
         LoadTest entity = LoadTestMapper.toEntity(request);
 
@@ -36,6 +40,7 @@ public class LoadTestServiceImpl implements LoadTestService {
     @Override
     public LoadTestResponse update(String id, LoadTestRequest request) {
         log.info("Updating LoadTest: id={}", id);
+        loadTestValidator.validateForUpdate(request);
 
         repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("LoadTest not found: " + id));

@@ -11,9 +11,8 @@ public class LoadTestRepository {
 
     private final Map<String, LoadTest> store = new ConcurrentHashMap<>();
 
-    public LoadTest save(LoadTest test) {
+    public void save(LoadTest test) {
         store.put(test.getId(), test);
-        return test;
     }
 
     public Optional<LoadTest> findById(String id) {
