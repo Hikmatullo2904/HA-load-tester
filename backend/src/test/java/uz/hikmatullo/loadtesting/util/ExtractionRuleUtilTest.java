@@ -3,7 +3,7 @@ package uz.hikmatullo.loadtesting.util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import uz.hikmatullo.loadtesting.engine.ExecutionContext;
+import uz.hikmatullo.loadtesting.engine.context.ExecutionContext;
 import uz.hikmatullo.loadtesting.exceptions.ExtractionRuleException;
 import uz.hikmatullo.loadtesting.model.entity.ExtractionRule;
 

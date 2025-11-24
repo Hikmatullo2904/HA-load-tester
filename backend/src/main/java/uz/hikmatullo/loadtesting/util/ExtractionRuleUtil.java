@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import uz.hikmatullo.loadtesting.engine.ExecutionContext;
+import uz.hikmatullo.loadtesting.engine.context.ExecutionContext;
 import uz.hikmatullo.loadtesting.exceptions.ExtractionRuleException;
 import uz.hikmatullo.loadtesting.model.entity.ExtractionRule;
 
