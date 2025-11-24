@@ -12,7 +12,7 @@ public class AggregationState {
 
     private String testId;
 
-    private Map<String, List<RequestMetric>> perStepRawMetrics = new HashMap<>();
+    private Map<String, List<RequestMetrics>> perStepRawMetrics = new HashMap<>();
 
     private Map<Long, TimelinePoint> timeline = new HashMap<>();
 

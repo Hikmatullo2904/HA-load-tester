@@ -1,5 +1,6 @@
 package uz.hikmatullo.loadtesting.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.web.bind.annotation.*;
 import uz.hikmatullo.loadtesting.model.request.ClusterMembershipRequest;
 import uz.hikmatullo.loadtesting.model.request.NodeConnectRequest;
@@ -24,6 +25,7 @@ public class NodeController {
     /*
     * This method accepts connection request from worker nodes
     * */
+    @Hidden
     @PostMapping("/add-worker")
     public ClusterInfoResponse connect(@RequestBody NodeConnectRequest request) {
         return service.addWorkerNode(request);

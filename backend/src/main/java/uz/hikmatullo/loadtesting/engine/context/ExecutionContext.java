@@ -1,4 +1,4 @@
-package uz.hikmatullo.loadtesting.service.engine;
+package uz.hikmatullo.loadtesting.engine.context;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +10,10 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/*
+*
+*
+* */
 @Getter
 @Setter
 public class ExecutionContext {
@@ -24,7 +28,7 @@ public class ExecutionContext {
 
     public ExecutionContext() {
         this.cookieManager = new CookieManager();
-        // Accept cookies by default; you can choose ACCEPT_ORIGINAL_SERVER for stricter behavior
+        // Accept cookies by default;
         this.cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
 
         this.httpClient = HttpClient.newBuilder()
@@ -35,17 +39,14 @@ public class ExecutionContext {
                 .build();
     }
 
-    /** Clear all cookies for this virtual user (useful between iterations) */
     public void clearCookies() {
         cookieManager.getCookieStore().removeAll();
     }
 
-    /** Inspect cookies (useful for UI or debugging) */
     public java.util.List<java.net.HttpCookie> getCookies() {
         return cookieManager.getCookieStore().getCookies();
     }
 
-    /** Get a cookie value by name, or null */
     public String getCookieValue(String name) {
         return cookieManager.getCookieStore().getCookies().stream()
                 .filter(c -> c.getName().equals(name))

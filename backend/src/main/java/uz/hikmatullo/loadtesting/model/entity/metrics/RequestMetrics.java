@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RequestMetric {
+public class RequestMetrics {
 
     private String stepId;          // which RequestStep this belongs to
     private long startTimeMs;       // epoch millis

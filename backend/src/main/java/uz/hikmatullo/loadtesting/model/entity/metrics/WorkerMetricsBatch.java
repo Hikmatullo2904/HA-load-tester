@@ -14,5 +14,5 @@ public class WorkerMetricsBatch {
     private String testId;
     // epoch seconds (for timeline)
     private long timestampSecond;
-    private List<RequestMetric> metrics;
+    private List<RequestMetrics> metrics;
 }
