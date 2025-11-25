@@ -13,12 +13,12 @@ public class LoadTestMapper {
 
     public static LoadTest toEntity(LoadTestRequest request) {
         return LoadTest.builder()
-                .name(request.name())
-                .description(request.description())
-                .profile(toEntity(request.profile()))
-                .steps(toRequestSteps(request.steps()))
-                .validationRules(toValidationRules(request.validationRules()))
-                .startAt(request.startAt())
+                .name(request.getName())
+                .description(request.getDescription())
+                .profile(toEntity(request.getProfile()))
+                .steps(toRequestSteps(request.getSteps()))
+                .validationRules(toValidationRules(request.getValidationRules()))
+                .startAt(request.getStartAt())
                 .createdAt(Instant.now())
                 .status(LoadTestStatus.DRAFT)
                 .build();
@@ -44,14 +44,14 @@ public class LoadTestMapper {
 
     public static RequestStep toRequestStep(RequestStepRequest request) {
         return RequestStep.builder()
-                .name(request.name())
-                .method(request.method())
-                .url(request.url())
-                .body(request.body())
-                .headers(request.headers())
-                .queryParams(request.queryParams())
-                .timeoutMs(request.timeoutMs())
-                .extractionRules(toExtractionRules(request.extractionRules()))
+                .name(request.getName())
+                .method(request.getMethod())
+                .url(request.getUrl())
+                .body(request.getBody())
+                .headers(request.getHeaders())
+                .queryParams(request.getQueryParams())
+                .timeoutMs(request.getTimeoutMs())
+                .extractionRules(toExtractionRules(request.getExtractionRules()))
                 .build();
     }
 

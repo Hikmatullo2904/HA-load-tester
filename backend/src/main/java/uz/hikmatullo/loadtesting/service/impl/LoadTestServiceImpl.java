@@ -2,8 +2,10 @@ package uz.hikmatullo.loadtesting.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uz.hikmatullo.loadtesting.engine.LoadTestExecutor;
 import uz.hikmatullo.loadtesting.mapper.LoadTestMapper;
 import uz.hikmatullo.loadtesting.model.entity.LoadTest;
+import uz.hikmatullo.loadtesting.model.entity.metrics.TestExecutionReport;
 import uz.hikmatullo.loadtesting.model.request.LoadTestRequest;
 import uz.hikmatullo.loadtesting.model.response.LoadTestResponse;
 import uz.hikmatullo.loadtesting.repository.LoadTestRepository;
@@ -18,15 +20,17 @@ public class LoadTestServiceImpl implements LoadTestService {
 
     private final LoadTestRepository repository;
     private final LoadTestValidator loadTestValidator;
+    private final LoadTestExecutor loadTestExecutor;
 
-    public LoadTestServiceImpl(LoadTestRepository repository, LoadTestValidator loadTestValidator) {
+    public LoadTestServiceImpl(LoadTestRepository repository, LoadTestValidator loadTestValidator, LoadTestExecutor loadTestExecutor) {
         this.repository = repository;
         this.loadTestValidator = loadTestValidator;
+        this.loadTestExecutor = loadTestExecutor;
     }
 
     @Override
     public LoadTestResponse create(LoadTestRequest request) {
-        log.info("Creating LoadTest: name={}, description={}", request.name(), request.description());
+        log.info("Creating LoadTest: name={}, description={}", request.getName(), request.getDescription());
         loadTestValidator.validateForCreate(request);
 
         LoadTest entity = LoadTestMapper.toEntity(request);
@@ -78,5 +82,13 @@ public class LoadTestServiceImpl implements LoadTestService {
 
         repository.deleteById(id);
         log.info("LoadTest deleted. id={}", id);
+    }
+
+    @Override
+    public TestExecutionReport execute(String id) {
+        LoadTest loadTest = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("LoadTest not found: " + id));
+        return loadTestExecutor.run(loadTest);
+
     }
 }

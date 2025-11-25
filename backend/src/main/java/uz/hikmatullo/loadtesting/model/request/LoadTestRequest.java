@@ -1,16 +1,23 @@
 package uz.hikmatullo.loadtesting.model.request;
 
-import uz.hikmatullo.loadtesting.model.enums.LoadTestStatus;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
-public record LoadTestRequest(
-        String name,
-        String description,
-        LoadProfileRequest profile,
-        List<RequestStepRequest> steps,
-        List<ValidationRuleRequest> validationRules,
-        Instant startAt
-) {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoadTestRequest{
+    private String name;
+    private String description;
+    private LoadProfileRequest profile;
+    private List<RequestStepRequest> steps = new ArrayList<>();
+    private List<ValidationRuleRequest> validationRules = new ArrayList<>();
+    private Instant startAt;
 }

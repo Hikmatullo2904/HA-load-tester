@@ -1,6 +1,6 @@
 package uz.hikmatullo.loadtesting.service.interfaces;
 
-import uz.hikmatullo.loadtesting.model.entity.LoadTest;
+import uz.hikmatullo.loadtesting.model.entity.metrics.TestExecutionReport;
 import uz.hikmatullo.loadtesting.model.request.LoadTestRequest;
 import uz.hikmatullo.loadtesting.model.response.LoadTestResponse;
 
@@ -17,4 +17,6 @@ public interface LoadTestService {
     List<LoadTestResponse> getAll();
 
     void delete(String id);
+
+    TestExecutionReport execute(String id);
 }

@@ -3,6 +3,7 @@ package uz.hikmatullo.loadtesting.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.hikmatullo.loadtesting.model.entity.metrics.TestExecutionReport;
 import uz.hikmatullo.loadtesting.model.request.LoadTestRequest;
 import uz.hikmatullo.loadtesting.model.response.LoadTestResponse;
 import uz.hikmatullo.loadtesting.service.interfaces.LoadTestService;
@@ -43,5 +44,10 @@ public class LoadTestController {
     public ResponseEntity<Void> delete(@PathVariable String id) {
         service.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/execute/{id}")
+    public ResponseEntity<TestExecutionReport> execute(@PathVariable String id) {
+        return ResponseEntity.ok(service.execute(id));
     }
 }

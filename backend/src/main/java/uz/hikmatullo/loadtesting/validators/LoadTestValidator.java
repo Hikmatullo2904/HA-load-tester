@@ -21,19 +21,19 @@ public class LoadTestValidator {
         }
 
         validateBasicFields(request);
-        validateProfile(request.profile());
-        validateSteps(request.steps());
-        validateValidationRules(request.validationRules());
+        validateProfile(request.getProfile());
+        validateSteps(request.getSteps());
+        validateValidationRules(request.getValidationRules());
     }
 
     private void validateBasicFields(LoadTestRequest request) {
-        if (isBlank(request.name())) {
+        if (isBlank(request.getName())) {
             throw new CustomBadRequestException("Test name is required");
         }
-        if (request.profile() == null) {
+        if (request.getProfile() == null) {
             throw new CustomBadRequestException("Load profile is required");
         }
-        if (request.steps() == null || request.steps().isEmpty()) {
+        if (request.getSteps() == null || request.getSteps().isEmpty()) {
             throw new CustomBadRequestException("At least one request step is required");
         }
     }
@@ -127,41 +127,36 @@ public class LoadTestValidator {
             if (step == null) {
                 throw new CustomBadRequestException(ctx + "request step is null");
             }
-            if (isBlank(step.name())) {
+            if (isBlank(step.getName())) {
                 throw new CustomBadRequestException(ctx + "name is required");
             }
-            if (step.method() == null) {
+            if (step.getMethod() == null) {
                 throw new CustomBadRequestException(ctx + "HTTP method is required");
             }
-            if (isBlank(step.url())) {
+            if (isBlank(step.getUrl())) {
                 throw new CustomBadRequestException(ctx + "url is required");
             }
-            if (step.timeoutMs() < 0) {
+            if (step.getTimeoutMs() < 0) {
                 throw new CustomBadRequestException(ctx + "timeoutMs must be >= 0");
             }
 
-            // Headers and query params can be null or empty; validate their keys if present
-            if (step.headers() != null) {
-                step.headers().forEach((k, v) -> {
-                    if (isBlank(k)) {
-                        throw new CustomBadRequestException(ctx + "headers must not have empty names");
-                    }
-                });
-            }
-            if (step.queryParams() != null) {
-                step.queryParams().forEach((k, v) -> {
-                    if (isBlank(k)) {
-                        throw new CustomBadRequestException(ctx + "queryParams must not have empty names");
-                    }
-                });
-            }
+            step.getHeaders().forEach((k, v) -> {
+                if (isBlank(k)) {
+                    throw new CustomBadRequestException(ctx + "headers must not have empty names");
+                }
+            });
+            step.getQueryParams().forEach((k, v) -> {
+                if (isBlank(k)) {
+                    throw new CustomBadRequestException(ctx + "queryParams must not have empty names");
+                }
+            });
 
             // Extraction rules
-            validateExtractionRules(step.extractionRules(), ctx);
+            validateExtractionRules(step.getExtractionRules(), ctx);
 
             // Body/template validation: if method is GET/DELETE, body should normally be empty (not enforced strictly)
-            if ((step.method().name().equalsIgnoreCase("GET") || step.method().name().equalsIgnoreCase("DELETE"))
-                    && step.body() != null && !step.body().isBlank()) {
+            if ((step.getMethod().name().equalsIgnoreCase("GET") || step.getMethod().name().equalsIgnoreCase("DELETE"))
+                    && step.getBody() != null && !step.getBody().isBlank()) {
                 // we allow body but warn - here we throw to be strict; you may change this to log a warning instead
                 throw new CustomBadRequestException(ctx + "GET/DELETE request contains a body; this is unusual");
             }
