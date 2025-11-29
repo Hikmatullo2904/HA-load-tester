@@ -3,7 +3,7 @@ import { Navigation } from '../components/Navigation';
 import { TestConfigPanel } from '../components/TestConfigPanel';
 import { ScenarioBuilder } from '../components/ScenarioBuilder';
 import { TestSummaryPanel } from '../components/TestSummaryPanel';
-import { TestConfig, TestStep, TestMetrics } from '../types/test';
+import { TestConfig, TestStep, TestMetrics, TestResult } from '../types/test';
 import { useNavigate } from 'react-router';
 
 export function CreateTestPage() {
@@ -172,6 +172,7 @@ export function CreateTestPage() {
         },
         responseTimeData: responseTimeData || [],
         activeUsersData: activeUsersData || [],
+        percentileData: [],
         startTime,
         endTime,
         status: 'completed' as const,
@@ -195,12 +196,12 @@ export function CreateTestPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-all duration-300" style={{ backgroundColor: 'var(--bg)' }}>
       <Navigation />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-slate-900 dark:text-slate-100 mb-2">Create Load Test</h1>
+          <h1 className="dark:text-white mb-2">Create Load Test</h1>
           <p className="text-slate-600 dark:text-slate-400">Configure your test parameters and start testing</p>
         </div>
 

@@ -89,20 +89,27 @@ export function HistoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-all duration-300" style={{ backgroundColor: 'var(--bg)' }}>
       <Navigation />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-slate-900 dark:text-slate-100 mb-2">Test History</h1>
-          <p className="text-slate-600 dark:text-slate-400">View and manage your past load tests</p>
+          <h1 className="mb-2 text-3xl font-bold" style={{ color: 'var(--text)' }}>Test History</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>View and manage your past load tests</p>
         </div>
 
         {tests.length === 0 ? (
-          <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <Card 
+            className="shadow-sm transition-all duration-300"
+            style={{ 
+              backgroundColor: 'var(--card)', 
+              borderColor: 'var(--card-border)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
+          >
             <CardContent className="py-16 text-center">
-              <Clock className="size-16 mx-auto mb-4 text-slate-300 dark:text-slate-700" />
-              <p className="text-slate-600 dark:text-slate-400 mb-6">No test history yet</p>
+              <Clock className="size-16 mx-auto mb-4" style={{ color: 'var(--text-muted)' }} />
+              <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>No test history yet</p>
               <Button onClick={() => navigate('/create')}>Create Your First Test</Button>
             </CardContent>
           </Card>
@@ -111,14 +118,19 @@ export function HistoryPage() {
             {tests.map((test) => (
               <Card
                 key={test.id}
-                className="shadow-sm hover:shadow-md transition-shadow cursor-pointer border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+                className="shadow-sm hover:shadow-md transition-shadow cursor-pointer transition-all duration-300"
+                style={{ 
+                  backgroundColor: 'var(--card)', 
+                  borderColor: 'var(--card-border)',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
                 onClick={() => navigate(`/results/${test.id}`)}
               >
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <h3 className="text-slate-900 dark:text-slate-100 mb-2">{test.name}</h3>
-                      <div className="flex items-center gap-6 text-sm text-slate-600 dark:text-slate-400">
+                      <h3 className="mb-2" style={{ color: 'var(--text)' }}>{test.name}</h3>
+                      <div className="flex items-center gap-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
                         <div className="flex items-center gap-2">
                           <Clock className="size-4" />
                           {test.startTime
@@ -144,25 +156,25 @@ export function HistoryPage() {
                       {test.metrics && (
                         <div className="flex items-center gap-6 mt-3 text-sm">
                           <div>
-                            <span className="text-slate-600 dark:text-slate-400">Requests: </span>
-                            <span className="text-slate-900 dark:text-slate-100">
+                            <span style={{ color: 'var(--text-secondary)' }}>Requests: </span>
+                            <span style={{ color: 'var(--text)' }}>
                               {test.metrics.totalRequests?.toLocaleString() || '0'}
                             </span>
                           </div>
                           <div>
-                            <span className="text-slate-600 dark:text-slate-400">Avg Response: </span>
-                            <span className="text-slate-900 dark:text-slate-100">
+                            <span style={{ color: 'var(--text-secondary)' }}>Avg Response: </span>
+                            <span style={{ color: 'var(--text)' }}>
                               {test.metrics.averageResponseTime || 0}ms
                             </span>
                           </div>
                           <div>
-                            <span className="text-slate-600 dark:text-slate-400">Error Rate: </span>
+                            <span style={{ color: 'var(--text-secondary)' }}>Error Rate: </span>
                             <span
-                              className={
-                                (test.metrics.errorRate || 0) > 5
-                                  ? 'text-red-600 dark:text-red-400'
-                                  : 'text-emerald-600 dark:text-emerald-400'
-                              }
+                              style={{
+                                color: (test.metrics.errorRate || 0) > 5 
+                                  ? 'var(--destructive)' 
+                                  : 'var(--success)'
+                              }}
                             >
                               {(test.metrics.errorRate || 0).toFixed(2)}%
                             </span>
@@ -178,7 +190,7 @@ export function HistoryPage() {
                       >
                         <Trash2 className="size-4 text-red-500" />
                       </Button>
-                      <ChevronRight className="size-5 text-slate-400 dark:text-slate-600" />
+                      <ChevronRight className="size-5" style={{ color: 'var(--text-muted)' }} />
                     </div>
                   </div>
                 </CardContent>

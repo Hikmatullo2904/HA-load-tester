@@ -76,20 +76,27 @@ export function ScenarioBuilder({ steps, onStepsChange, disabled }: ScenarioBuil
   };
 
   return (
-    <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">
+    <Card 
+      className="shadow-sm transition-all duration-300"
+      style={{ 
+        backgroundColor: 'var(--card)', 
+        borderColor: 'var(--card-border)',
+        boxShadow: 'var(--shadow-sm)'
+      }}
+    >
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
-          <List className="size-5 text-purple-600 dark:text-purple-400" />
+        <CardTitle className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
+          <List className="size-5" style={{ color: 'var(--chart-5)' }} />
           Test Scenarios
         </CardTitle>
-        <CardDescription className="text-slate-600 dark:text-slate-400">
+        <CardDescription style={{ color: 'var(--text-secondary)' }}>
           Build multi-step test scenarios with drag & drop
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {steps.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-            <List className="size-12 mx-auto mb-3 text-slate-300 dark:text-slate-700" />
+          <div className="text-center py-8" style={{ color: 'var(--text-secondary)' }}>
+            <List className="size-12 mx-auto mb-3" style={{ color: 'var(--text-muted)' }} />
             <p className="mb-4">No steps added yet</p>
             <Button onClick={addStep} disabled={disabled} variant="outline" className="gap-2">
               <Plus className="size-4" />
@@ -105,22 +112,32 @@ export function ScenarioBuilder({ steps, onStepsChange, disabled }: ScenarioBuil
                 onDragStart={() => handleDragStart(index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
-                className={`border border-slate-200 dark:border-slate-800 rounded-lg p-4 bg-white dark:bg-slate-800 space-y-3 transition-all ${
+                className={`border rounded-lg p-4 space-y-3 transition-all ${
                   draggedIndex === index ? 'opacity-50' : 'hover:shadow-md'
                 } ${disabled ? 'cursor-default' : 'cursor-move'}`}
+                style={{ 
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--bg-secondary)'
+                }}
               >
                 <div className="flex items-center gap-2">
                   <GripVertical
-                    className={`size-4 text-slate-400 dark:text-slate-600 ${
+                    className={`size-4 ${
                       disabled ? 'cursor-default' : 'cursor-move'
                     }`}
+                    style={{ color: 'var(--text-muted)' }}
                   />
                   <Input
                     placeholder="Step name"
                     value={step.name}
                     onChange={(e) => updateStep(step.id, { name: e.target.value })}
                     disabled={disabled}
-                    className="flex-1 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                    className="flex-1"
+                    style={{ 
+                      backgroundColor: 'var(--input-background)', 
+                      borderColor: 'var(--input-border)',
+                      color: 'var(--text)'
+                    }}
                   />
                   <div className="flex items-center gap-1">
                     {index > 0 && (
@@ -158,16 +175,26 @@ export function ScenarioBuilder({ steps, onStepsChange, disabled }: ScenarioBuil
                 </div>
 
                 {expandedStep === step.id && (
-                  <div className="space-y-4 pt-3 border-t border-slate-200 dark:border-slate-700">
+                  <div 
+                    className="space-y-4 pt-3 border-t"
+                    style={{ borderColor: 'var(--border)' }}
+                  >
                     <div className="grid grid-cols-3 gap-3">
                       <div className="space-y-1">
-                        <Label className="text-xs text-slate-600 dark:text-slate-400">Method</Label>
+                        <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Method</Label>
                         <Select
                           value={step.method}
                           onValueChange={(value) => updateStep(step.id, { method: value })}
                           disabled={disabled}
                         >
-                          <SelectTrigger className="h-8 text-sm bg-white dark:bg-slate-900">
+                          <SelectTrigger 
+                            className="h-8 text-sm"
+                            style={{ 
+                              backgroundColor: 'var(--input-background)', 
+                              borderColor: 'var(--input-border)',
+                              color: 'var(--text)'
+                            }}
+                          >
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -180,7 +207,7 @@ export function ScenarioBuilder({ steps, onStepsChange, disabled }: ScenarioBuil
                         </Select>
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-slate-600 dark:text-slate-400">Weight</Label>
+                        <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Weight</Label>
                         <Input
                           type="number"
                           min="1"
@@ -189,11 +216,16 @@ export function ScenarioBuilder({ steps, onStepsChange, disabled }: ScenarioBuil
                             updateStep(step.id, { weight: parseInt(e.target.value) || 1 })
                           }
                           disabled={disabled}
-                          className="h-8 text-sm bg-white dark:bg-slate-900"
+                          className="h-8 text-sm"
+                          style={{ 
+                            backgroundColor: 'var(--input-background)', 
+                            borderColor: 'var(--input-border)',
+                            color: 'var(--text)'
+                          }}
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-slate-600 dark:text-slate-400">Delay (ms)</Label>
+                        <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Delay (ms)</Label>
                         <Input
                           type="number"
                           min="0"
@@ -202,37 +234,52 @@ export function ScenarioBuilder({ steps, onStepsChange, disabled }: ScenarioBuil
                             updateStep(step.id, { delay: parseInt(e.target.value) || 0 })
                           }
                           disabled={disabled}
-                          className="h-8 text-sm bg-white dark:bg-slate-900"
+                          className="h-8 text-sm"
+                          style={{ 
+                            backgroundColor: 'var(--input-background)', 
+                            borderColor: 'var(--input-border)',
+                            color: 'var(--text)'
+                          }}
                         />
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <Label className="text-xs text-slate-600 dark:text-slate-400">URL</Label>
+                      <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>URL</Label>
                       <Input
                         placeholder="https://api.example.com/endpoint"
                         value={step.url}
                         onChange={(e) => updateStep(step.id, { url: e.target.value })}
                         disabled={disabled}
-                        className="h-8 text-sm bg-white dark:bg-slate-900"
+                        className="h-8 text-sm"
+                        style={{ 
+                          backgroundColor: 'var(--input-background)', 
+                          borderColor: 'var(--input-border)',
+                          color: 'var(--text)'
+                        }}
                       />
                     </div>
 
                     {(step.method === 'POST' || step.method === 'PUT' || step.method === 'PATCH') && (
                       <div className="space-y-1">
-                        <Label className="text-xs text-slate-600 dark:text-slate-400">Request Body</Label>
+                        <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Request Body</Label>
                         <Textarea
                           placeholder='{\n  "key": "value"\n}'
                           value={step.body || ''}
                           onChange={(e) => updateStep(step.id, { body: e.target.value })}
                           disabled={disabled}
-                          className="font-mono text-sm min-h-[120px] bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-700"
+                          className="font-mono text-sm min-h-[120px]"
+                          style={{ 
+                            backgroundColor: 'var(--input-background)', 
+                            borderColor: 'var(--input-border)',
+                            color: 'var(--text)'
+                          }}
                         />
                       </div>
                     )}
 
                     <div className="space-y-2">
-                      <Label className="text-xs text-slate-600 dark:text-slate-400">Headers</Label>
+                      <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Headers</Label>
                       <HeadersEditor
                         headers={step.headers || []}
                         onChange={(headers) => updateStep(step.id, { headers })}
@@ -242,7 +289,7 @@ export function ScenarioBuilder({ steps, onStepsChange, disabled }: ScenarioBuil
 
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1">
-                        <Label className="text-xs text-slate-600 dark:text-slate-400">
+                        <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                           Expected Status
                         </Label>
                         <Input
@@ -254,11 +301,16 @@ export function ScenarioBuilder({ steps, onStepsChange, disabled }: ScenarioBuil
                             updateStep(step.id, { expectedStatus: parseInt(e.target.value) || 200 })
                           }
                           disabled={disabled}
-                          className="h-8 text-sm bg-white dark:bg-slate-900"
+                          className="h-8 text-sm"
+                          style={{ 
+                            backgroundColor: 'var(--input-background)', 
+                            borderColor: 'var(--input-border)',
+                            color: 'var(--text)'
+                          }}
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs text-slate-600 dark:text-slate-400">Retry Count</Label>
+                        <Label className="text-xs" style={{ color: 'var(--text-secondary)' }}>Retry Count</Label>
                         <Input
                           type="number"
                           min="0"
@@ -268,7 +320,12 @@ export function ScenarioBuilder({ steps, onStepsChange, disabled }: ScenarioBuil
                             updateStep(step.id, { retryCount: parseInt(e.target.value) || 0 })
                           }
                           disabled={disabled}
-                          className="h-8 text-sm bg-white dark:bg-slate-900"
+                          className="h-8 text-sm"
+                          style={{ 
+                            backgroundColor: 'var(--input-background)', 
+                            borderColor: 'var(--input-border)',
+                            color: 'var(--text)'
+                          }}
                         />
                       </div>
                     </div>

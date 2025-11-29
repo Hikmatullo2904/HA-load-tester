@@ -10,8 +10,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     <NextThemesProvider
       attribute="class"
       defaultTheme="system"
-      enableSystem
+      enableSystem={true}
       disableTransitionOnChange={false}
+      storageKey="load-tester-theme"
     >
       {children}
     </NextThemesProvider>

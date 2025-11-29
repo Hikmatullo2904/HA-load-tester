@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { Play, Square, Activity, CheckCircle2, XCircle, Clock, Zap } from 'lucide-react';
+import { Play, Square, Activity, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { TestConfig, TestStep, TestMetrics } from '../types/test';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useTheme } from 'next-themes';
@@ -29,29 +29,56 @@ export function TestSummaryPanel({
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   
+  // Chart colors from CSS variables
+  const chartColors = {
+    text: isDark ? 'var(--text-secondary)' : 'var(--text-secondary)',
+    grid: isDark ? 'var(--border)' : 'var(--border)',
+    responseTime: 'var(--chart-1)',
+    users: 'var(--chart-5)',
+    rps: 'var(--chart-2)',
+    cardBg: 'var(--card)',
+    cardBorder: 'var(--card-border)',
+  };
+  
   return (
     <div className="space-y-6">
-      <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+      <Card 
+        className="shadow-sm transition-all duration-300" 
+        style={{ 
+          backgroundColor: 'var(--card)', 
+          borderColor: 'var(--card-border)',
+          boxShadow: 'var(--shadow-sm)'
+        }}
+      >
         <CardContent className="pt-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               {isRunning ? (
                 <>
                   <div className="relative">
-                    <div className="size-3 bg-emerald-500 rounded-full animate-pulse" />
-                    <div className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-75" />
+                    <div 
+                      className="size-3 rounded-full animate-pulse" 
+                      style={{ backgroundColor: 'var(--success)' }}
+                    />
+                    <div 
+                      className="absolute inset-0 rounded-full animate-ping opacity-75" 
+                      style={{ backgroundColor: 'var(--success)' }}
+                    />
                   </div>
                   <div>
-                    <p className="text-emerald-600 dark:text-emerald-400">Running</p>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Test in progress...</p>
+                    <p style={{ color: 'var(--success)' }}>Running</p>
+                    <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Test in progress...</p>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="size-3 bg-slate-400 dark:bg-slate-600 rounded-full" />
+                  <div 
+                    className="size-3 rounded-full" 
+                    style={{ backgroundColor: 'var(--text-muted)' }}
+                  />
                   <div>
-                    <p className="text-slate-700 dark:text-slate-300">Ready</p>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Configure and start test</p>
+                    <p style={{ color: 'var(--text)' }}>Ready</p>
+                    <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Configure and start test</p>
                   </div>
                 </>
               )}
@@ -70,22 +97,28 @@ export function TestSummaryPanel({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700">
+          <div 
+            className="grid grid-cols-2 gap-3 p-4 rounded-lg border transition-all duration-300"
+            style={{ 
+              backgroundColor: 'var(--bg-secondary)', 
+              borderColor: 'var(--border)' 
+            }}
+          >
             <div>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">Test Type</p>
-              <p className="text-slate-900 dark:text-slate-100 capitalize">{config.testType}</p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Test Type</p>
+              <p className="capitalize" style={{ color: 'var(--text)' }}>{config.testType}</p>
             </div>
             <div>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">Virtual Users</p>
-              <p className="text-slate-900 dark:text-slate-100">{config.virtualUsers}</p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Virtual Users</p>
+              <p style={{ color: 'var(--text)' }}>{config.virtualUsers}</p>
             </div>
             <div>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">Duration</p>
-              <p className="text-slate-900 dark:text-slate-100">{config.duration}s</p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Duration</p>
+              <p style={{ color: 'var(--text)' }}>{config.duration}s</p>
             </div>
             <div>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">Steps</p>
-              <p className="text-slate-900 dark:text-slate-100">{steps.length || 'Single endpoint'}</p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Steps</p>
+              <p style={{ color: 'var(--text)' }}>{steps.length || 'Single endpoint'}</p>
             </div>
           </div>
         </CardContent>
@@ -99,42 +132,53 @@ export function TestSummaryPanel({
                 label: 'Total Requests',
                 value: metrics.totalRequests.toLocaleString(),
                 icon: Activity,
-                color: 'text-blue-600',
-                bg: 'bg-blue-50',
+                color: 'var(--chart-1)',
+                bg: isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.1)',
               },
               {
                 label: 'Successful',
                 value: metrics.successfulRequests.toLocaleString(),
                 icon: CheckCircle2,
-                color: 'text-emerald-600',
-                bg: 'bg-emerald-50',
+                color: 'var(--chart-2)',
+                bg: isDark ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)',
               },
               {
                 label: 'Failed',
                 value: metrics.failedRequests.toLocaleString(),
                 icon: XCircle,
-                color: 'text-red-600',
-                bg: 'bg-red-50',
+                color: 'var(--chart-4)',
+                bg: isDark ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.1)',
               },
               {
                 label: 'Avg Response',
                 value: `${metrics.averageResponseTime}ms`,
                 icon: Clock,
-                color: 'text-amber-600',
-                bg: 'bg-amber-50',
+                color: 'var(--chart-3)',
+                bg: isDark ? 'rgba(245, 158, 11, 0.15)' : 'rgba(245, 158, 11, 0.1)',
               },
             ].map((metric) => {
               const Icon = metric.icon;
               return (
-                <Card key={metric.label} className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                <Card 
+                  key={metric.label} 
+                  className="shadow-sm transition-all duration-300"
+                  style={{ 
+                    backgroundColor: 'var(--card)', 
+                    borderColor: 'var(--card-border)',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
+                >
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-slate-600 dark:text-slate-400 text-sm mb-1">{metric.label}</p>
-                        <p className="text-slate-900 dark:text-slate-100">{metric.value}</p>
+                        <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>{metric.label}</p>
+                        <p style={{ color: 'var(--text)' }}>{metric.value}</p>
                       </div>
-                      <div className={`p-2 rounded-lg ${metric.bg}`}>
-                        <Icon className={`size-5 ${metric.color}`} />
+                      <div 
+                        className="p-2 rounded-lg"
+                        style={{ backgroundColor: metric.bg }}
+                      >
+                        <Icon className="size-5" style={{ color: metric.color }} />
                       </div>
                     </div>
                   </CardContent>
@@ -143,12 +187,19 @@ export function TestSummaryPanel({
             })}
           </div>
 
-          <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <Card 
+            className="shadow-sm transition-all duration-300"
+            style={{ 
+              backgroundColor: 'var(--card)', 
+              borderColor: 'var(--card-border)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
+          >
             <CardHeader>
-              <CardTitle className="text-slate-900 dark:text-slate-100">Response Time</CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400">
+              <CardTitle style={{ color: 'var(--text)' }}>Response Time</CardTitle>
+              <CardDescription style={{ color: 'var(--text-secondary)' }}>
                 Real-time performance metrics
-                {isRunning && <span className="ml-2 text-emerald-600 dark:text-emerald-400">(Live)</span>}
+                {isRunning && <span className="ml-2" style={{ color: 'var(--success)' }}>(Live)</span>}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -156,30 +207,40 @@ export function TestSummaryPanel({
                 {responseTimeData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={responseTimeData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#e2e8f0'} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
                       <XAxis
                         dataKey="time"
-                        stroke={isDark ? '#cbd5e1' : '#64748b'}
-                        tick={{ fontSize: 12, fill: isDark ? '#cbd5e1' : '#64748b' }}
-                        label={{ value: 'Time (s)', position: 'insideBottom', offset: -5, fill: isDark ? '#cbd5e1' : '#64748b' }}
+                        stroke={chartColors.text}
+                        tick={{ fontSize: 12, fill: chartColors.text }}
+                        label={{ 
+                          value: 'Time (s)', 
+                          position: 'insideBottom', 
+                          offset: -5, 
+                          fill: chartColors.text 
+                        }}
                       />
                       <YAxis
-                        stroke={isDark ? '#cbd5e1' : '#64748b'}
-                        tick={{ fontSize: 12, fill: isDark ? '#cbd5e1' : '#64748b' }}
-                        label={{ value: 'Response Time (ms)', angle: -90, position: 'insideLeft', fill: isDark ? '#cbd5e1' : '#64748b' }}
+                        stroke={chartColors.text}
+                        tick={{ fontSize: 12, fill: chartColors.text }}
+                        label={{ 
+                          value: 'Response Time (ms)', 
+                          angle: -90, 
+                          position: 'insideLeft', 
+                          fill: chartColors.text 
+                        }}
                       />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: isDark ? '#1e293b' : '#fff',
-                          border: `1px solid ${isDark ? '#334155' : '#e2e8f0'}`,
+                          backgroundColor: 'var(--card)',
+                          border: `1px solid var(--border)`,
                           borderRadius: '8px',
-                          color: isDark ? '#cbd5e1' : '#1e293b',
+                          color: 'var(--text)',
                         }}
                       />
                       <Line
                         type="monotone"
                         dataKey="responseTime"
-                        stroke="#3b82f6"
+                        stroke={chartColors.responseTime}
                         strokeWidth={2}
                         dot={false}
                         name="Response Time (ms)"
@@ -187,7 +248,10 @@ export function TestSummaryPanel({
                     </LineChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="flex items-center justify-center h-full text-slate-400 dark:text-slate-600">
+                  <div 
+                    className="flex items-center justify-center h-full"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
                     Waiting for test data...
                   </div>
                 )}
@@ -195,35 +259,66 @@ export function TestSummaryPanel({
             </CardContent>
           </Card>
 
-          <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <Card 
+            className="shadow-sm transition-all duration-300"
+            style={{ 
+              backgroundColor: 'var(--card)', 
+              borderColor: 'var(--card-border)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
+          >
             <CardHeader>
-              <CardTitle className="text-slate-900 dark:text-slate-100">Load Pattern</CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400">Virtual users and throughput over time</CardDescription>
+              <CardTitle style={{ color: 'var(--text)' }}>Load Pattern</CardTitle>
+              <CardDescription style={{ color: 'var(--text-secondary)' }}>
+                Virtual users and throughput over time
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-64">
                 {activeUsersData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={activeUsersData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#e2e8f0'} />
+                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
                       <XAxis
                         dataKey="time"
-                        stroke={isDark ? '#cbd5e1' : '#64748b'}
-                        tick={{ fontSize: 12, fill: isDark ? '#cbd5e1' : '#64748b' }}
-                        label={{ value: 'Time (s)', position: 'insideBottom', offset: -5, fill: isDark ? '#cbd5e1' : '#64748b' }}
+                        stroke={chartColors.text}
+                        tick={{ fontSize: 12, fill: chartColors.text }}
+                        label={{ 
+                          value: 'Time (s)', 
+                          position: 'insideBottom', 
+                          offset: -5, 
+                          fill: chartColors.text 
+                        }}
                       />
                       <YAxis
                         yAxisId="left"
-                        stroke={isDark ? '#cbd5e1' : '#64748b'}
-                        tick={{ fontSize: 12, fill: isDark ? '#cbd5e1' : '#64748b' }}
+                        stroke={chartColors.text}
+                        tick={{ fontSize: 12, fill: chartColors.text }}
+                        label={{
+                          value: 'Virtual Users',
+                          angle: -90,
+                          position: 'insideLeft',
+                          fill: chartColors.text,
+                        }}
                       />
-                      <YAxis yAxisId="right" orientation="right" stroke={isDark ? '#cbd5e1' : '#64748b'} tick={{ fontSize: 12, fill: isDark ? '#cbd5e1' : '#64748b' }} />
+                      <YAxis 
+                        yAxisId="right" 
+                        orientation="right" 
+                        stroke={chartColors.text} 
+                        tick={{ fontSize: 12, fill: chartColors.text }}
+                        label={{
+                          value: 'Requests/s',
+                          angle: 90,
+                          position: 'insideRight',
+                          fill: chartColors.text,
+                        }}
+                      />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: isDark ? '#1e293b' : '#fff',
-                          border: `1px solid ${isDark ? '#334155' : '#e2e8f0'}`,
+                          backgroundColor: 'var(--card)',
+                          border: `1px solid var(--border)`,
                           borderRadius: '8px',
-                          color: isDark ? '#cbd5e1' : '#1e293b',
+                          color: 'var(--text)',
                         }}
                       />
                       <Legend />
@@ -231,7 +326,7 @@ export function TestSummaryPanel({
                         yAxisId="left"
                         type="monotone"
                         dataKey="users"
-                        stroke="#8b5cf6"
+                        stroke={chartColors.users}
                         strokeWidth={2}
                         dot={false}
                         name="Virtual Users"
@@ -240,7 +335,7 @@ export function TestSummaryPanel({
                         yAxisId="right"
                         type="monotone"
                         dataKey="rps"
-                        stroke="#10b981"
+                        stroke={chartColors.rps}
                         strokeWidth={2}
                         dot={false}
                         name="Requests/s"
@@ -248,7 +343,10 @@ export function TestSummaryPanel({
                     </LineChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="flex items-center justify-center h-full text-slate-400 dark:text-slate-600">
+                  <div 
+                    className="flex items-center justify-center h-full"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
                     Waiting for test data...
                   </div>
                 )}

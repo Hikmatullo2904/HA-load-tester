@@ -14,15 +14,25 @@ export function Navigation() {
   ];
 
   return (
-    <nav className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">
+    <nav 
+      className="border-b transition-all duration-300" 
+      style={{ 
+        backgroundColor: 'var(--bg)', 
+        borderColor: 'var(--border)',
+        color: 'var(--text)'
+      }}
+    >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center gap-2">
-              <div className="size-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div 
+                className="size-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center"
+                style={{ background: 'linear-gradient(to bottom right, var(--primary), #8b5cf6)' }}
+              >
                 <FlaskConical className="size-5 text-white" />
               </div>
-              <span className="text-slate-900 dark:text-slate-100 font-medium">Load Tester</span>
+              <span className="font-medium" style={{ color: 'var(--text)' }}>Load Tester</span>
             </Link>
 
             <div className="flex items-center gap-1">

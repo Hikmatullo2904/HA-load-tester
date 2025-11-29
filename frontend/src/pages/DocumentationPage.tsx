@@ -8,13 +8,13 @@ export function DocumentationPage() {
       icon: Zap,
       title: 'Getting Started',
       content: (
-        <div className="space-y-4 text-slate-600 dark:text-slate-400">
+        <div className="space-y-4" style={{ color: 'var(--text-secondary)' }}>
           <p>
             Load Tester is a modern, beginner-friendly API load testing platform. It's simpler than
             JMeter and more intuitive than Locust, but with all the power you need.
           </p>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Quick Start</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Quick Start</h4>
             <ol className="list-decimal list-inside space-y-2 ml-2">
               <li>Navigate to "Create Test" from the menu</li>
               <li>Enter your API endpoint URL</li>
@@ -30,30 +30,30 @@ export function DocumentationPage() {
       icon: Users,
       title: 'Test Types',
       content: (
-        <div className="space-y-4 text-slate-600 dark:text-slate-400">
+        <div className="space-y-4" style={{ color: 'var(--text-secondary)' }}>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Fixed Load</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Fixed Load</h4>
             <p>
               Maintains a constant number of virtual users throughout the test. Best for steady-state
               performance testing.
             </p>
           </div>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Ramp-up Load</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Ramp-up Load</h4>
             <p>
               Gradually increases the number of users over time. Useful for finding the breaking point
               of your API.
             </p>
           </div>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Spike Test</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Spike Test</h4>
             <p>
               Simulates sudden traffic spikes. Helps identify how your API handles unexpected load
               increases.
             </p>
           </div>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Stress Test</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Stress Test</h4>
             <p>
               Progressively increases load in steps. Ideal for determining maximum capacity and
               failure points.
@@ -66,13 +66,13 @@ export function DocumentationPage() {
       icon: Code,
       title: 'Scenario Builder',
       content: (
-        <div className="space-y-4 text-slate-600 dark:text-slate-400">
+        <div className="space-y-4" style={{ color: 'var(--text-secondary)' }}>
           <p>
             Create multi-step test scenarios to simulate complex user workflows. Each step can have its
             own method, URL, headers, and body.
           </p>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Step Features</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Step Features</h4>
             <ul className="list-disc list-inside space-y-1 ml-2">
               <li>Drag & drop to reorder steps</li>
               <li>Configure HTTP method (GET, POST, PUT, DELETE, PATCH)</li>
@@ -90,20 +90,26 @@ export function DocumentationPage() {
       icon: Shield,
       title: 'Authentication',
       content: (
-        <div className="space-y-4 text-slate-600 dark:text-slate-400">
+        <div className="space-y-4" style={{ color: 'var(--text-secondary)' }}>
           <p>Load Tester supports multiple authentication methods:</p>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Bearer Token</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Bearer Token</h4>
             <p>Add your token in the Authentication section. It will be sent as:</p>
-            <code className="block mt-2 p-2 bg-slate-100 dark:bg-slate-800 rounded text-sm">
+            <code 
+              className="block mt-2 p-2 rounded text-sm"
+              style={{ 
+                backgroundColor: 'var(--bg-secondary)', 
+                color: 'var(--text)'
+              }}
+            >
               Authorization: Bearer YOUR_TOKEN
             </code>
           </div>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Basic Auth</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Basic Auth</h4>
             <p>Provide username and password. They will be base64 encoded automatically.</p>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-500">
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
             You can save authentication presets in Settings for easy reuse.
           </p>
         </div>
@@ -113,10 +119,10 @@ export function DocumentationPage() {
       icon: BarChart3,
       title: 'Metrics & Results',
       content: (
-        <div className="space-y-4 text-slate-600 dark:text-slate-400">
+        <div className="space-y-4" style={{ color: 'var(--text-secondary)' }}>
           <p>Load Tester provides comprehensive metrics to analyze your API performance:</p>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Key Metrics</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Key Metrics</h4>
             <ul className="list-disc list-inside space-y-1 ml-2">
               <li>Total Requests - Number of requests sent</li>
               <li>Success/Failure Rate - Percentage of successful vs failed requests</li>
@@ -127,7 +133,7 @@ export function DocumentationPage() {
             </ul>
           </div>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Charts</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Charts</h4>
             <ul className="list-disc list-inside space-y-1 ml-2">
               <li>Response Time Over Time - Performance trends</li>
               <li>RPS Chart - Throughput visualization</li>
@@ -143,9 +149,9 @@ export function DocumentationPage() {
       icon: Clock,
       title: 'Best Practices',
       content: (
-        <div className="space-y-4 text-slate-600 dark:text-slate-400">
+        <div className="space-y-4" style={{ color: 'var(--text-secondary)' }}>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Test Configuration</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Test Configuration</h4>
             <ul className="list-disc list-inside space-y-1 ml-2">
               <li>Start with small user counts and gradually increase</li>
               <li>Use appropriate test durations (30-60 seconds for quick tests)</li>
@@ -154,7 +160,7 @@ export function DocumentationPage() {
             </ul>
           </div>
           <div>
-            <h4 className="text-slate-900 dark:text-slate-100 font-medium mb-2">Interpreting Results</h4>
+            <h4 className="font-medium mb-2" style={{ color: 'var(--text)' }}>Interpreting Results</h4>
             <ul className="list-disc list-inside space-y-1 ml-2">
               <li>P95 and P99 percentiles show worst-case performance</li>
               <li>Error rates above 1% may indicate issues</li>
@@ -168,7 +174,7 @@ export function DocumentationPage() {
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen dark:bg-slate-950 transition-colors">
+    <div className="bg-slate-50 min-h-screen dark:bg-slate-950 transition-all duration-300" style={{ backgroundColor: 'var(--bg)' }}>
       <Navigation />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -178,8 +184,8 @@ export function DocumentationPage() {
               <BookOpen className="size-6 text-white" />
             </div>
             <div>
-              <h1 className="text-slate-900 dark:text-slate-100">Documentation</h1>
-              <p className="text-slate-600 dark:text-slate-400">
+              <h1 style={{ color: 'var(--text)' }}>Documentation</h1>
+              <p style={{ color: 'var(--text-secondary)' }}>
                 Learn how to use Load Tester effectively
               </p>
             </div>
@@ -192,11 +198,16 @@ export function DocumentationPage() {
             return (
               <Card
                 key={section.title}
-                className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+                className="shadow-sm transition-all duration-300"
+                style={{ 
+                  backgroundColor: 'var(--card)', 
+                  borderColor: 'var(--card-border)',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
               >
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
-                    <Icon className="size-5 text-purple-600 dark:text-purple-400" />
+                  <CardTitle className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
+                    <Icon className="size-5" style={{ color: 'var(--chart-5)' }} />
                     {section.title}
                   </CardTitle>
                 </CardHeader>

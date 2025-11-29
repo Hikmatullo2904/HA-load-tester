@@ -141,7 +141,7 @@ export function ResultsPage() {
 
   if (!result) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-all duration-300" style={{ backgroundColor: 'var(--bg)' }}>
         <Navigation />
         <div className="max-w-7xl mx-auto px-6 py-16 text-center">
           <p className="text-slate-600 dark:text-slate-400">Test not found</p>
@@ -156,7 +156,7 @@ export function ResultsPage() {
   // Ensure metrics exist, if not show error
   if (!result.metrics) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-all duration-300" style={{ backgroundColor: 'var(--bg)' }}>
         <Navigation />
         <div className="max-w-7xl mx-auto px-6 py-16 text-center">
           <p className="text-slate-600 dark:text-slate-400">
@@ -212,7 +212,7 @@ export function ResultsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-all duration-300" style={{ backgroundColor: 'var(--bg)' }}>
       <Navigation />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -296,16 +296,24 @@ export function ResultsPage() {
             return (
               <Card
                 key={metric.label}
-                className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+                className="shadow-sm transition-all duration-300"
+                style={{ 
+                  backgroundColor: 'var(--card)', 
+                  borderColor: 'var(--card-border)',
+                  boxShadow: 'var(--shadow-sm)'
+                }}
               >
                 <CardContent className="pt-6">
                   <div className="flex flex-col gap-2">
-                    <div className={`p-2 rounded-lg ${metric.bg} self-start`}>
-                      <Icon className={`size-5 ${metric.color}`} />
+                    <div 
+                      className="p-2 rounded-lg self-start"
+                      style={{ backgroundColor: metric.bg }}
+                    >
+                      <Icon className="size-5" style={{ color: metric.color }} />
                     </div>
                     <div>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm">{metric.label}</p>
-                      <p className="text-slate-900 dark:text-slate-100 font-medium">
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{metric.label}</p>
+                      <p className="font-medium" style={{ color: 'var(--text)' }}>
                         {metric.value}
                       </p>
                     </div>
@@ -317,12 +325,19 @@ export function ResultsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <Card 
+            className="shadow-sm transition-all duration-300"
+            style={{ 
+              backgroundColor: 'var(--card)', 
+              borderColor: 'var(--card-border)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
+          >
             <CardHeader>
-              <CardTitle className="text-slate-900 dark:text-slate-100">
+              <CardTitle style={{ color: 'var(--text)' }}>
                 Response Time Over Time
               </CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400">
+              <CardDescription style={{ color: 'var(--text-secondary)' }}>
                 Performance throughout the test
               </CardDescription>
             </CardHeader>
@@ -374,10 +389,17 @@ export function ResultsPage() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <Card 
+            className="shadow-sm transition-all duration-300"
+            style={{ 
+              backgroundColor: 'var(--card)', 
+              borderColor: 'var(--card-border)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
+          >
             <CardHeader>
-              <CardTitle className="text-slate-900 dark:text-slate-100">RPS Over Time</CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400">
+              <CardTitle style={{ color: 'var(--text)' }}>RPS Over Time</CardTitle>
+              <CardDescription style={{ color: 'var(--text-secondary)' }}>
                 Requests per second throughout the test
               </CardDescription>
             </CardHeader>
@@ -431,12 +453,19 @@ export function ResultsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <Card 
+            className="shadow-sm transition-all duration-300"
+            style={{ 
+              backgroundColor: 'var(--card)', 
+              borderColor: 'var(--card-border)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
+          >
             <CardHeader>
-              <CardTitle className="text-slate-900 dark:text-slate-100">
+              <CardTitle style={{ color: 'var(--text)' }}>
                 Percentile Distribution
               </CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400">
+              <CardDescription style={{ color: 'var(--text-secondary)' }}>
                 Response time percentiles
               </CardDescription>
             </CardHeader>
@@ -475,10 +504,17 @@ export function ResultsPage() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <Card 
+            className="shadow-sm transition-all duration-300"
+            style={{ 
+              backgroundColor: 'var(--card)', 
+              borderColor: 'var(--card-border)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
+          >
             <CardHeader>
-              <CardTitle className="text-slate-900 dark:text-slate-100">Error Timeline</CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400">
+              <CardTitle style={{ color: 'var(--text)' }}>Error Timeline</CardTitle>
+              <CardDescription style={{ color: 'var(--text-secondary)' }}>
                 Errors over time during the test
               </CardDescription>
             </CardHeader>
@@ -531,10 +567,17 @@ export function ResultsPage() {
           </Card>
         </div>
 
-        <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 mb-6">
+        <Card 
+          className="shadow-sm transition-all duration-300 mb-6"
+          style={{ 
+            backgroundColor: 'var(--card)', 
+            borderColor: 'var(--card-border)',
+            boxShadow: 'var(--shadow-sm)'
+          }}
+        >
           <CardHeader>
-            <CardTitle className="text-slate-900 dark:text-slate-100">Load Pattern</CardTitle>
-            <CardDescription className="text-slate-600 dark:text-slate-400">
+            <CardTitle style={{ color: 'var(--text)' }}>Load Pattern</CardTitle>
+            <CardDescription style={{ color: 'var(--text-secondary)' }}>
               Virtual users and requests per second
             </CardDescription>
           </CardHeader>
@@ -599,13 +642,20 @@ export function ResultsPage() {
         </Card>
 
         {result.logs && result.logs.length > 0 && (
-          <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+          <Card 
+            className="shadow-sm transition-all duration-300"
+            style={{ 
+              backgroundColor: 'var(--card)', 
+              borderColor: 'var(--card-border)',
+              boxShadow: 'var(--shadow-sm)'
+            }}
+          >
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
+              <CardTitle className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
                 <FileText className="size-5" />
                 Test Logs
               </CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400">
+              <CardDescription style={{ color: 'var(--text-secondary)' }}>
                 Execution logs from the test run
               </CardDescription>
             </CardHeader>
@@ -614,35 +664,41 @@ export function ResultsPage() {
                 {result.logs.map((log, index) => (
                   <div
                     key={index}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700"
+                    className="flex items-start gap-3 p-3 rounded-lg border"
+                    style={{ 
+                      backgroundColor: 'var(--bg-secondary)', 
+                      borderColor: 'var(--border)'
+                    }}
                   >
                     <AlertCircle
-                      className={`size-4 mt-0.5 ${
-                        log.level === 'error'
-                          ? 'text-red-500'
+                      className="size-4 mt-0.5"
+                      style={{
+                        color: log.level === 'error' 
+                          ? 'var(--destructive)' 
                           : log.level === 'warning'
-                            ? 'text-amber-500'
-                            : 'text-blue-500'
-                      }`}
+                            ? 'var(--warning)'
+                            : 'var(--primary)'
+                      }}
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span
-                          className={`text-xs font-medium ${
-                            log.level === 'error'
-                              ? 'text-red-600 dark:text-red-400'
+                          className="text-xs font-medium"
+                          style={{
+                            color: log.level === 'error' 
+                              ? 'var(--destructive)' 
                               : log.level === 'warning'
-                                ? 'text-amber-600 dark:text-amber-400'
-                                : 'text-blue-600 dark:text-blue-400'
-                          }`}
+                                ? 'var(--warning)'
+                                : 'var(--primary)'
+                          }}
                         >
                           {log.level.toUpperCase()}
                         </span>
-                        <span className="text-xs text-slate-500 dark:text-slate-500">
+                        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
                           {log.timestamp.toLocaleTimeString()}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-700 dark:text-slate-300">{log.message}</p>
+                      <p className="text-sm" style={{ color: 'var(--text)' }}>{log.message}</p>
                     </div>
                   </div>
                 ))}

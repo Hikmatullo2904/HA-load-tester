@@ -18,18 +18,27 @@ interface TestConfigPanelProps {
 
 export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfigPanelProps) {
   return (
-    <Card className="shadow-sm border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+    <Card
+      className="shadow-sm transition-all duration-300"
+      style={{
+        backgroundColor: 'var(--card)',
+        borderColor: 'var(--card-border)',
+        boxShadow: 'var(--shadow-sm)'
+      }}
+    >
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
-          <Settings className="size-5 text-blue-600 dark:text-blue-400" />
+        <CardTitle className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
+          <Settings className="size-5" style={{ color: 'var(--primary)' }} />
           Test Configuration
         </CardTitle>
-        <CardDescription className="text-slate-600 dark:text-slate-400">Configure your load test parameters</CardDescription>
+        <CardDescription style={{ color: 'var(--text-secondary)' }}>
+          Configure your load test parameters
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="url" className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+            <Label htmlFor="url" className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
               <Globe className="size-4" />
               Target URL
             </Label>
@@ -40,19 +49,30 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
               value={config.url}
               onChange={(e) => onConfigChange({ ...config, url: e.target.value })}
               disabled={disabled}
-              className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+              style={{
+                backgroundColor: 'var(--input-background)',
+                borderColor: 'var(--input-border)',
+                color: 'var(--text)'
+              }}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="method" className="text-slate-700 dark:text-slate-300">HTTP Method</Label>
+              <Label htmlFor="method" style={{ color: 'var(--text)' }}>HTTP Method</Label>
               <Select
                 value={config.method}
-                onValueChange={(value) => onConfigChange({ ...config, method: value })}
+                onValueChange={(value: string) => onConfigChange({ ...config, method: value })}
                 disabled={disabled}
               >
-                <SelectTrigger id="method" className="bg-white dark:bg-slate-900">
+                <SelectTrigger
+                  id="method"
+                  style={{
+                    backgroundColor: 'var(--input-background)',
+                    borderColor: 'var(--input-border)',
+                    color: 'var(--text)'
+                  }}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -66,16 +86,23 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="testType" className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+              <Label htmlFor="testType" className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
                 <Zap className="size-4" />
                 Test Type
               </Label>
               <Select
                 value={config.testType}
-                onValueChange={(value) => onConfigChange({ ...config, testType: value })}
+                onValueChange={(value: string) => onConfigChange({ ...config, testType: value })}
                 disabled={disabled}
               >
-                <SelectTrigger id="testType" className="bg-white dark:bg-slate-900">
+                <SelectTrigger
+                  id="testType"
+                  style={{
+                    backgroundColor: 'var(--input-background)',
+                    borderColor: 'var(--input-border)',
+                    color: 'var(--text)'
+                  }}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -89,7 +116,7 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="users" className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+            <Label htmlFor="users" className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
               <Users className="size-4" />
               Virtual Users
             </Label>
@@ -103,13 +130,17 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
                 onConfigChange({ ...config, virtualUsers: parseInt(e.target.value) || 1 })
               }
               disabled={disabled}
-              className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+              style={{
+                backgroundColor: 'var(--input-background)',
+                borderColor: 'var(--input-border)',
+                color: 'var(--text)'
+              }}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="duration" className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+              <Label htmlFor="duration" className="flex items-center gap-2" style={{ color: 'var(--text)' }}>
                 <Clock className="size-4" />
                 Duration (s)
               </Label>
@@ -123,12 +154,16 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
                   onConfigChange({ ...config, duration: parseInt(e.target.value) || 1 })
                 }
                 disabled={disabled}
-                className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+                style={{
+                  backgroundColor: 'var(--input-background)',
+                  borderColor: 'var(--input-border)',
+                  color: 'var(--text)'
+                }}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rampup" className="text-slate-700 dark:text-slate-300">Ramp-up (s)</Label>
+              <Label htmlFor="rampup" style={{ color: 'var(--text)' }}>Ramp-up (s)</Label>
               <Input
                 id="rampup"
                 type="number"
@@ -139,15 +174,23 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
                   onConfigChange({ ...config, rampUpTime: parseInt(e.target.value) || 0 })
                 }
                 disabled={disabled || config.testType !== 'ramp-up'}
-                className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+                style={{
+                  backgroundColor: 'var(--input-background)',
+                  borderColor: 'var(--input-border)',
+                  color: 'var(--text)'
+                }}
               />
             </div>
           </div>
         </div>
 
-        <Accordion type="multiple" className="border-t border-slate-200 dark:border-slate-800 pt-4">
-          <AccordionItem value="headers" className="border-slate-200 dark:border-slate-800">
-            <AccordionTrigger className="text-slate-700 dark:text-slate-300 hover:no-underline">
+        <Accordion
+          type="multiple"
+          className="border-t pt-4"
+          style={{ borderColor: 'var(--border)' }}
+        >
+          <AccordionItem value="headers" style={{ borderColor: 'var(--border)' }}>
+            <AccordionTrigger className="hover:no-underline" style={{ color: 'var(--text)' }}>
               Request Headers
             </AccordionTrigger>
             <AccordionContent>
@@ -159,8 +202,8 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="body" className="border-slate-200 dark:border-slate-800">
-            <AccordionTrigger className="text-slate-700 dark:text-slate-300 hover:no-underline">
+          <AccordionItem value="body" style={{ borderColor: 'var(--border)' }}>
+            <AccordionTrigger className="hover:no-underline" style={{ color: 'var(--text)' }}>
               Request Body
             </AccordionTrigger>
             <AccordionContent>
@@ -172,8 +215,8 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="auth" className="border-slate-200 dark:border-slate-800">
-            <AccordionTrigger className="text-slate-700 dark:text-slate-300 hover:no-underline flex items-center gap-2">
+          <AccordionItem value="auth" style={{ borderColor: 'var(--border)' }}>
+            <AccordionTrigger className="hover:no-underline flex items-center gap-2" style={{ color: 'var(--text)' }}>
               <Shield className="size-4" />
               Authentication
             </AccordionTrigger>
@@ -186,13 +229,13 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="advanced" className="border-slate-200 dark:border-slate-800">
-            <AccordionTrigger className="text-slate-700 dark:text-slate-300 hover:no-underline">
+          <AccordionItem value="advanced" style={{ borderColor: 'var(--border)' }}>
+            <AccordionTrigger className="hover:no-underline" style={{ color: 'var(--text)' }}>
               Advanced Settings
             </AccordionTrigger>
             <AccordionContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="timeout" className="text-slate-700 dark:text-slate-300">Timeout (seconds)</Label>
+                <Label htmlFor="timeout" style={{ color: 'var(--text)' }}>Timeout (seconds)</Label>
                 <Input
                   id="timeout"
                   type="number"
@@ -203,12 +246,16 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
                     onConfigChange({ ...config, timeout: parseInt(e.target.value) || 30 })
                   }
                   disabled={disabled}
-                  className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+                  style={{
+                    backgroundColor: 'var(--input-background)',
+                    borderColor: 'var(--input-border)',
+                    color: 'var(--text)'
+                  }}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="delay" className="text-slate-700 dark:text-slate-300">Delay Between Requests (ms)</Label>
+                <Label htmlFor="delay" style={{ color: 'var(--text)' }}>Delay Between Requests (ms)</Label>
                 <Input
                   id="delay"
                   type="number"
@@ -219,26 +266,30 @@ export function TestConfigPanel({ config, onConfigChange, disabled }: TestConfig
                     onConfigChange({ ...config, delayBetweenRequests: parseInt(e.target.value) || 0 })
                   }
                   disabled={disabled}
-                  className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+                  style={{
+                    backgroundColor: 'var(--input-background)',
+                    borderColor: 'var(--input-border)',
+                    color: 'var(--text)'
+                  }}
                 />
               </div>
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="keepalive" className="text-slate-700 dark:text-slate-300">Keep-Alive</Label>
+                <Label htmlFor="keepalive" style={{ color: 'var(--text)' }}>Keep-Alive</Label>
                 <Switch
                   id="keepalive"
                   checked={config.keepAlive}
-                  onCheckedChange={(checked) => onConfigChange({ ...config, keepAlive: checked })}
+                  onCheckedChange={(checked: boolean) => onConfigChange({ ...config, keepAlive: checked })}
                   disabled={disabled}
                 />
               </div>
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="reuse" className="text-slate-700 dark:text-slate-300">Connection Reuse</Label>
+                <Label htmlFor="reuse" style={{ color: 'var(--text)' }}>Connection Reuse</Label>
                 <Switch
                   id="reuse"
                   checked={config.connectionReuse}
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked: boolean) =>
                     onConfigChange({ ...config, connectionReuse: checked })
                   }
                   disabled={disabled}

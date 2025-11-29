@@ -39,31 +39,40 @@ export function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-950 dark:via-slate-900/50 dark:to-slate-950 transition-colors">
+    <div 
+      className="min-h-screen transition-all duration-300" 
+      style={{ backgroundColor: 'var(--bg)', color: 'var(--text)' }}
+    >
       <Navigation />
 
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 mb-6">
+          <div 
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6"
+            style={{ 
+              backgroundColor: 'var(--primary-light)', 
+              color: 'var(--primary)' 
+            }}
+          >
             <Zap className="size-4" />
             <span className="text-sm">Simple. Powerful. Professional.</span>
           </div>
-          <h1 className="text-slate-900 dark:text-slate-100 mb-4">
+          <h1 className="mb-4 text-4xl font-bold" style={{ color: 'var(--text)' }}>
             Modern API Load Testing
           </h1>
-          <p className="text-slate-600 dark:text-slate-400 text-xl max-w-2xl mx-auto mb-8">
+          <p className="text-xl max-w-2xl mx-auto mb-8" style={{ color: 'var(--text-secondary)' }}>
             Test your APIs with ease. Simpler than JMeter, more intuitive than Locust,
             but with all the power you need.
           </p>
           <div className="flex items-center justify-center gap-4">
             <Link to="/create">
-              <Button size="lg" className="gap-2">
+              <Button size="lg" className="gap-2 text-white">
                 <Plus className="size-5" />
                 Create New Test
               </Button>
             </Link>
             <Link to="/history">
-              <Button size="lg" variant="outline" className="gap-2">
+              <Button size="lg" variant="outline" className="gap-2 dark:text-white">
                 View Test History
               </Button>
             </Link>
@@ -74,25 +83,40 @@ export function HomePage() {
           {features.map((feature) => {
             const Icon = feature.icon;
             return (
-              <Card key={feature.title} className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-lg transition-shadow">
+              <Card 
+                key={feature.title} 
+                className="hover:shadow-lg transition-shadow"
+                style={{ 
+                  borderColor: 'var(--border)',
+                  backgroundColor: 'var(--card)'
+                }}
+              >
                 <CardHeader>
-                  <div className="size-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-4">
+                  <div 
+                    className="size-12 rounded-xl flex items-center justify-center mb-4"
+                    style={{ background: 'linear-gradient(to bottom right, var(--primary), #8b5cf6)' }}
+                  >
                     <Icon className="size-6 text-white" />
                   </div>
-                  <CardTitle className="text-slate-900 dark:text-slate-100">{feature.title}</CardTitle>
-                  <CardDescription className="text-slate-600 dark:text-slate-400">{feature.description}</CardDescription>
+                  <CardTitle style={{ color: 'var(--text)' }}>{feature.title}</CardTitle>
+                  <CardDescription style={{ color: 'var(--text-secondary)' }}>{feature.description}</CardDescription>
                 </CardHeader>
               </Card>
             );
           })}
         </div>
 
-        <Card className="bg-gradient-to-br from-blue-500 to-purple-600 border-0 text-white">
+        <Card 
+          className="border-0 text-white"
+          style={{ 
+            background: 'linear-gradient(to bottom right, var(--primary), #8b5cf6)'
+          }}
+        >
           <CardContent className="pt-8 pb-8">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-white mb-2">Ready to test your API?</h3>
-                <p className="text-blue-100">
+                <p className="text-white/90">
                   Create your first load test in less than a minute
                 </p>
               </div>
