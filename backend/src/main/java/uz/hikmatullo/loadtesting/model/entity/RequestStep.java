@@ -23,7 +23,7 @@ public class RequestStep {
     private Map<String, String> headers = new HashMap<>();
     private Map<String, String> queryParams = new HashMap<>();
 
-    private int timeoutMs;
+    private Integer timeoutMs;
 
     private List<ExtractionRule> extractionRules = new ArrayList<>();
 }

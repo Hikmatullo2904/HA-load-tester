@@ -15,7 +15,7 @@ public record RequestStepResponse(
         String body,
         Map<String, String> headers,
         Map<String, String> queryParams,
-        int timeoutMs,
+        Integer timeoutMs,
         List<ExtractionRuleResponse> extractionRules
 ) {
 }

@@ -10,6 +10,7 @@ import uz.hikmatullo.loadtesting.model.entity.RequestStep;
 import uz.hikmatullo.loadtesting.model.entity.metrics.RequestMetrics;
 import uz.hikmatullo.loadtesting.model.entity.metrics.TestExecutionReport;
 import uz.hikmatullo.loadtesting.util.ExtractionRuleUtil;
+import uz.hikmatullo.loadtesting.util.HttpRequestUtil;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -105,61 +106,74 @@ public class FixedLoadTypeExecutor {
 
             for (RequestStep step : loadTest.getSteps()) {
 
+                if (stopFlag.get()) break;
+
                 long st = System.currentTimeMillis();
 
                 try {
-                    HttpRequest request = buildHttpRequest(step, ctx);
+                    HttpRequest request = HttpRequestUtil.buildRequest(step, ctx);
+
                     HttpResponse<String> response = client.send(
                             request,
                             HttpResponse.BodyHandlers.ofString()
                     );
 
+                    int status = response.statusCode();
+                    boolean success = status >= 200 && status < 400;
                     long end = System.currentTimeMillis();
 
-                    RequestMetrics metric = buildMetric(step, response, st, end, true, null);
-                    metricsCollector.add(metric);
+                    // Add metric for this request
+                    metricsCollector.add(buildMetric(
+                            step,
+                            response,
+                            st,
+                            end,
+                            success,
+                            success ? null : "http_" + status
+                    ));
 
-                    // apply extraction rules
-                    if (!step.getExtractionRules().isEmpty()) {
-                        step.getExtractionRules().forEach(rule -> {
-                            try {
-                                ExtractionRuleUtil.applyRule(rule, response.body(), ctx);
-                            } catch (Exception e) {
-                                // user extraction rule error → stop for this user
-                                metricsCollector.add(buildMetric(step, response, st, System.currentTimeMillis(), false, "extraction_error"));
-                                return;
-                            }
-                        });
+                    // If HTTP error → stop only this iteration, not the whole VU
+                    if (!success) {
+                        break;
+                    }
+
+                    // ---- Extraction rules (run only when successful)
+                    for (var rule : step.getExtractionRules()) {
+                        try {
+                            ExtractionRuleUtil.applyRule(rule, response.body(), ctx);
+                        } catch (Exception e) {
+                            metricsCollector.add(buildMetric(
+                                    step,
+                                    response,
+                                    st,
+                                    System.currentTimeMillis(),
+                                    false,
+                                    "extraction_error"
+                            ));
+                            break; // stop processing this step, continue loop
+                        }
                     }
 
                 } catch (Exception e) {
-                    log.error("Error executing step {}", step.getId(), e);
+                    // Network / timeout / TLS errors
                     long end = System.currentTimeMillis();
 
-                    metricsCollector.add(buildMetric(step, null, st, end, false, classifyError(e)));
-                    return; // stop executing next steps for this VU
+                    metricsCollector.add(buildMetric(
+                            step,
+                            null,
+                            st,
+                            end,
+                            false,
+                            classifyError(e)
+                    ));
+
+                    // Stop this iteration but keep VU alive
+                    break;
                 }
             }
         }
     }
 
-    /** Build HttpRequest from RequestStep */
-    private HttpRequest buildHttpRequest(RequestStep step, ExecutionContext ctx) {
-        HttpRequest.Builder b = HttpRequest.newBuilder()
-                .uri(URI.create(step.getUrl()))
-                .timeout(Duration.ofMillis(step.getTimeoutMs()));
-
-        step.getHeaders().forEach(b::header);
-
-        switch (step.getMethod()) {
-            case GET -> b.GET();
-            case POST -> b.POST(HttpRequest.BodyPublishers.ofString(step.getBody() == null ? "" : step.getBody()));
-            case PUT -> b.PUT(HttpRequest.BodyPublishers.ofString(step.getBody() == null ? "" : step.getBody()));
-            case DELETE -> b.DELETE();
-        }
-
-        return b.build();
-    }
 
     /** Build RequestMetrics */
     private RequestMetrics buildMetric(RequestStep step,

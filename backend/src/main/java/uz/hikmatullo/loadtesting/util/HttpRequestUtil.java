@@ -45,10 +45,9 @@ public final class HttpRequestUtil {
         if (substitutedUrl == null || substitutedUrl.isBlank()) {
             throw new InvalidHttpRequestException("RequestStep.url is empty after placeholder substitution");
         }
-        System.out.println("substitutedUrl: " + substitutedUrl);
 
         String finalUrl = buildUrlWithQueryParams(substitutedUrl, step.getQueryParams(), ctx);
-        System.out.println("final url " + finalUrl);
+
         URI uri;
         try {
             uri = URI.create(finalUrl);
@@ -59,7 +58,7 @@ public final class HttpRequestUtil {
         HttpRequest.Builder builder = HttpRequest.newBuilder().uri(uri);
 
         // ---------- Timeout ----------
-        if (step.getTimeoutMs() > 0) {
+        if (step.getTimeoutMs() != null && step.getTimeoutMs() > 0) {
             builder.timeout(Duration.ofMillis(step.getTimeoutMs()));
         }else {
             builder.timeout(Duration.ofMillis(DEFAULT_TIMEOUT_MS));
