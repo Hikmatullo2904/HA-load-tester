@@ -1,7 +1,9 @@
 package uz.hikmatullo.loadtesting.engine.executors;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uz.hikmatullo.loadtesting.engine.aggregator.SimpleMetricsAggregator;
 import uz.hikmatullo.loadtesting.engine.context.ExecutionContext;
 import uz.hikmatullo.loadtesting.model.entity.LoadTest;
 import uz.hikmatullo.loadtesting.model.entity.RequestStep;
@@ -21,7 +23,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FixedLoadTypeExecutor {
+
+    private final SimpleMetricsAggregator simpleMetricsAggregator;
 
     public TestExecutionReport run(LoadTest loadTest) {
         ExecutionResult result = execute(loadTest);
@@ -30,7 +35,13 @@ public class FixedLoadTypeExecutor {
         log.info("Total metrics collected = {}", metrics.size());
 
         log.info("Test finished At: {}", result.finishedAt());
-        return  null;
+        return simpleMetricsAggregator.buildReport(
+                loadTest.getId(),
+                result.startedAt(),
+                result.finishedAt(),
+                metrics,
+                loadTest.getSteps()
+        );
     }
 
 
@@ -122,6 +133,7 @@ public class FixedLoadTypeExecutor {
                     }
 
                 } catch (Exception e) {
+                    log.error("Error executing step {}", step.getId(), e);
                     long end = System.currentTimeMillis();
 
                     metricsCollector.add(buildMetric(step, null, st, end, false, classifyError(e)));
@@ -132,7 +144,7 @@ public class FixedLoadTypeExecutor {
     }
 
     /** Build HttpRequest from RequestStep */
-    private HttpRequest buildHttpRequest(RequestStep step, ExecutionContext ctx) throws Exception {
+    private HttpRequest buildHttpRequest(RequestStep step, ExecutionContext ctx) {
         HttpRequest.Builder b = HttpRequest.newBuilder()
                 .uri(URI.create(step.getUrl()))
                 .timeout(Duration.ofMillis(step.getTimeoutMs()));

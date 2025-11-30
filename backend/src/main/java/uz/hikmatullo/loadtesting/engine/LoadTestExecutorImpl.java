@@ -13,9 +13,10 @@ public class LoadTestExecutorImpl implements LoadTestExecutor {
     private final FixedLoadTypeExecutor fixedLoadTypeExecutor;
     @Override
     public TestExecutionReport run(LoadTest loadTest) {
+        TestExecutionReport report = null;
         switch (loadTest.getProfile().getType()) {
-            case LoadType.FIXED -> fixedLoadTypeExecutor.run(loadTest);
+            case LoadType.FIXED -> report = fixedLoadTypeExecutor.run(loadTest);
         }
-        return null;
+        return report;
     }
 }

@@ -82,6 +82,24 @@ public class ExtractionRuleUtilTest {
         assertEquals("item1", ctx.getVariables().get("name"));
     }
 
+    @Test
+    @DisplayName("Should extract null value")
+    void test_whenValueIsNull() {
+        ExtractionRule rule = ExtractionRule.builder()
+                .jsonPath("$.id")
+                .saveAs("id")
+                .build();
+
+        String body = "{\"id\": null}";
+
+        ExtractionRuleUtil.applyRule(rule, body, ctx);
+        if (!ctx.getVariables().containsKey("id")) {
+            fail("Variable 'id' not found in context");
+        }
+
+        assertNull(ctx.getVariables().get("id"));
+    }
+
     // ------------------------------------------------------
     // FAILURE CASES (THROW EXTRACTION RULE EXCEPTION)
     // ------------------------------------------------------

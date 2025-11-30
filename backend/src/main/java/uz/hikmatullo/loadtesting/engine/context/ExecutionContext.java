@@ -7,8 +7,8 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /*
 *
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Setter
 public class ExecutionContext {
 
-    private final Map<String, Object> variables = new ConcurrentHashMap<>();
+    private final Map<String, Object> variables = new HashMap<>();
 
     // One CookieManager per virtual user => cookie isolation
     private final CookieManager cookieManager;
