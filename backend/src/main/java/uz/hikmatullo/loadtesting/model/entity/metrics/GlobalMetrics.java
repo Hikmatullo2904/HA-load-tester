@@ -14,6 +14,7 @@ public class GlobalMetrics {
     private long failedRequests;
 
     private double successRate;
+    private double errorRate;
 
     private long minLatency;
     private long maxLatency;

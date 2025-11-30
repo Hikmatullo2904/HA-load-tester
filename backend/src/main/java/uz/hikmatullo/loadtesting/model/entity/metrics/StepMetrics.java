@@ -18,6 +18,9 @@ public class StepMetrics {
     private long successfulRequests;
     private long failedRequests;
 
+    private double successRate;
+    private double errorRate;
+
     private long minLatency;
     private long maxLatency;
     private long meanLatency;
