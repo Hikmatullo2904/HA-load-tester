@@ -177,4 +177,71 @@ public class ExtractionRuleUtilTest {
         assertThrows(ExtractionRuleException.class,
                 () -> ExtractionRuleUtil.applyRule(rule, body, ctx));
     }
+
+    /*
+    ============ ExtractionRuleUtil Performance ============
+    Iterations      : 150000
+    Total time      : 982.9151 ms
+    Avg per extract : 6.552767333333334 µs
+    Ops/sec         : 152607
+    ========================================================
+    */
+    @Test
+    @DisplayName("Performance test for ExtractionRuleUtil (5000 iterations)")
+    void extractionPerformanceTest() {
+
+        // Rule to benchmark
+        ExtractionRule rule = ExtractionRule.builder()
+                .jsonPath("$.items[0].name")
+                .saveAs("name")
+                .build();
+
+        // Sample JSON body
+        String body = """
+                {
+                  "items": [
+                    {"name": "item1"},
+                    {"name": "item2"}
+                  ]
+                }
+                """;
+
+        ExecutionContext ctx = new ExecutionContext();
+
+        // ---------------------------
+        // WARMUP PHASE (important!)
+        // ---------------------------
+        for (int i = 0; i < 500; i++) {
+            ExtractionRuleUtil.applyRule(rule, body, ctx);
+        }
+
+        // ---------------------------
+        // MEASUREMENT
+        // ---------------------------
+        int iterations = 150000;
+
+        long start = System.nanoTime();
+
+        for (int i = 0; i < iterations; i++) {
+            ExtractionRuleUtil.applyRule(rule, body, ctx);
+        }
+
+        long end = System.nanoTime();
+
+        // ---------------------------
+        // RESULTS
+        // ---------------------------
+        long durationNs = end - start;
+        double durationMs = durationNs / 1_000_000.0;
+        double avgNs = durationNs / (double) iterations;
+        double avgUs = avgNs / 1000.0;
+        double opsPerSec = (1_000_000_000.0 / avgNs);
+
+        System.out.println("============ ExtractionRuleUtil Performance ============");
+        System.out.println("Iterations      : " + iterations);
+        System.out.println("Total time      : " + durationMs + " ms");
+        System.out.println("Avg per extract : " + avgUs + " µs");
+        System.out.println("Ops/sec         : " + ((int) opsPerSec));
+        System.out.println("========================================================");
+    }
 }

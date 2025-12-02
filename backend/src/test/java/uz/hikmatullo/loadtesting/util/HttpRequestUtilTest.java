@@ -1,6 +1,7 @@
 package uz.hikmatullo.loadtesting.util;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import uz.hikmatullo.loadtesting.engine.context.ExecutionContext;
 import uz.hikmatullo.loadtesting.exceptions.InvalidHttpRequestException;
@@ -11,6 +12,7 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,11 +51,14 @@ class HttpRequestUtilTest {
                 .timeoutMs(3000)
                 .body("{\"name\":\"john\"}")
                 .headers(Map.of("Content-Type", "application/json"))
+                .queryParams(Map.of("q", "john", "limit", "10"))
                 .build();
 
         HttpRequest req = HttpRequestUtil.buildRequest(step, new ExecutionContext());
 
         assertEquals("POST", req.method());
+        assertTrue(Objects.equals(URI.create("https://example.com/api?q=john&limit=10"), req.uri()) ||
+                Objects.equals(URI.create("https://example.com/api?limit=10&q=john"), req.uri()));
         assertEquals("application/json", req.headers().firstValue("Content-Type").orElse(null));
         assertTrue(req.bodyPublisher().isPresent());
     }
@@ -269,8 +274,7 @@ class HttpRequestUtilTest {
     // BODY TESTS
     // ----------------------------
 
-
-
+    
     @Test
     void test_BodyMissingVariable_Throws() {
         RequestStep step = RequestStep.builder()
@@ -315,9 +319,6 @@ class HttpRequestUtilTest {
     }
 
 
-    // ----------------------------
-    // FULL INTEGRATION TEST
-    // ----------------------------
 
     @Test
     void test_FullRequest_BodyHeadersQueryPathAllCombined() {
@@ -340,5 +341,85 @@ class HttpRequestUtilTest {
         assertTrue("https://api.test.com/users/99?q=laptop&limit=5".equals(req.uri().toString()) || "https://api.test.com/users/99?limit=5&q=laptop".equals(req.uri().toString()));
         assertEquals("Token ZXCV123",
                 req.headers().firstValue("Auth").orElse(""));
+    }
+
+    /*
+    ================ HttpRequestUtil Benchmark ================
+    Iterations       : 100000
+    Total duration   : 613.9748 ms
+    Avg build time   : 6.139748 µs
+    Ops/sec          : 162873
+    ===========================================================
+    */
+    @Test
+    @DisplayName("Benchmark HttpRequestUtil.buildRequest() - 50,000 iterations")
+    void benchmarkBuildRequest() {
+
+        RequestStep step = RequestStep.builder()
+                .method(HttpMethod.POST)
+                .url("https://example.com/api")
+                .timeoutMs(3000)
+                .body("{\"name\":\"john\", \"id\": \"{{token}}\"}")
+                .headers(Map.of(
+                        "Content-Type", "application/json",
+                        "X-User", "{{userId}}"
+                ))
+                .queryParams(Map.of(
+                        "q", "john",
+                        "limit", "10"
+                ))
+                .build();
+
+        ExecutionContext ctx = new ExecutionContext();
+        ctx.getVariables().put("token", "xyz123");
+        ctx.getVariables().put("userId", "42");
+
+        // ---------------------------------------
+        // Correctness check (run only once)
+        // ---------------------------------------
+        HttpRequest req = HttpRequestUtil.buildRequest(step, ctx);
+
+        assertEquals("POST", req.method());
+        assertTrue(
+                Objects.equals(URI.create("https://example.com/api?q=john&limit=10"), req.uri()) ||
+                        Objects.equals(URI.create("https://example.com/api?limit=10&q=john"), req.uri())
+        );
+        assertEquals("application/json", req.headers().firstValue("Content-Type").orElse(null));
+
+        // ---------------------------------------
+        // WARMUP PHASE
+        // ---------------------------------------
+        for (int i = 0; i < 200; i++) {
+            HttpRequestUtil.buildRequest(step, ctx);
+        }
+
+        // ---------------------------------------
+        // BENCHMARK
+        // ---------------------------------------
+        int iterations = 100_000;
+
+        long startNs = System.nanoTime();
+
+        for (int i = 0; i < iterations; i++) {
+            HttpRequestUtil.buildRequest(step, ctx);
+        }
+
+        long endNs = System.nanoTime();
+        long durationNs = endNs - startNs;
+
+        // ---------------------------------------
+        // RESULT REPORT
+        // ---------------------------------------
+        double durationMs = durationNs / 1_000_000.0;
+        double avgNs = (double) durationNs / iterations;
+        double avgUs = avgNs / 1000.0;
+        double opsPerSec = 1_000_000_000.0 / avgNs;
+
+        System.out.println("\n================ HttpRequestUtil Benchmark ================");
+        System.out.println("Iterations       : " + iterations);
+        System.out.println("Total duration   : " + durationMs + " ms");
+        System.out.println("Avg build time   : " + avgUs + " µs");
+        System.out.println("Ops/sec          : " + (int) opsPerSec);
+        System.out.println("===========================================================\n");
     }
 }
