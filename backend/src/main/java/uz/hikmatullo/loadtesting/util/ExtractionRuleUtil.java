@@ -34,7 +34,7 @@ public class ExtractionRuleUtil {
             Object extracted;
 
             // "$" → raw string response
-            if (path.equals("$")) {
+            if (path.equals("$") || path.equals("$.")) {
                 extracted = responseBody;
             } else {
                 JsonNode jsonNode = tryParseJson(responseBody);
