@@ -1,16 +1,36 @@
 package uz.hikmatullo.loadtesting.engine.aggregator;
 
 import org.springframework.stereotype.Component;
-import uz.hikmatullo.loadtesting.model.entity.metrics.*;
 import uz.hikmatullo.loadtesting.model.entity.RequestStep;
+import uz.hikmatullo.loadtesting.model.entity.metrics.*;
 import uz.hikmatullo.loadtesting.util.PercentileCalculator;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Responsible for converting raw RequestMetrics (one entry per HTTP request)
+ * into high-level load-test insights:
+ * - GlobalMetrics  → summary of entire test run
+ * - StepMetrics    → per-request-step statistics (e.g., Login step, Search step)
+ * - Timeline       → downsampled second-by-second RPS & error graph
+ * This class does NOT care how tests are executed. It only consumes metrics
+ * and produces a structured report.
+ */
 @Component
 public class SimpleMetricsAggregator {
 
+    private static final int MAX_TIMELINE_POINTS = 300;
+
+    /**
+     * Entry point. Takes raw request metrics and produces the final
+     * TestExecutionReport object returned to the caller.
+     * Steps:
+     * 1. Build global summary (success rate, percentiles, RPS…)
+     * 2. Build step-level breakdown (latency per step, errors per step…)
+     * 3. Build timeline (RPS over time, success/failure over time)
+     * The returned report is what the frontend or API consumers visualize.
+     */
     public TestExecutionReport buildReport(
             String testId,
             long startedAt,
@@ -19,41 +39,42 @@ public class SimpleMetricsAggregator {
             List<RequestStep> steps
     ) {
         GlobalMetrics global = buildGlobalMetrics(metrics, startedAt, finishedAt);
-        List<StepMetrics> stepMetrics = buildStepMetrics(metrics, steps, startedAt, finishedAt);
-        List<TimelinePoint> timeline = buildTimeline(metrics);
+        List<StepMetrics> perStep = buildStepMetrics(metrics, steps, startedAt, finishedAt);
+        List<TimelinePoint> timeline = buildTimeline(metrics, startedAt, finishedAt);
 
         return TestExecutionReport.builder()
                 .testId(testId)
                 .global(global)
-                .steps(stepMetrics)
+                .steps(perStep)
                 .timeline(timeline)
                 .startedAt(startedAt)
                 .finishedAt(finishedAt)
                 .build();
     }
 
-    // -------------------------------------------------------
-    // GLOBAL METRICS
-    // -------------------------------------------------------
+
     private GlobalMetrics buildGlobalMetrics(List<RequestMetrics> metrics, long startedAt, long finishedAt) {
 
         long total = metrics.size();
         long success = metrics.stream().filter(RequestMetrics::isSuccess).count();
-        List<Long> latencies = metrics.stream()
-                .map(RequestMetrics::getLatencyMs)
-                .collect(Collectors.toList());
+        long failed = total - success;
 
         long durationSec = Math.max(1, (finishedAt - startedAt) / 1000);
+
+        List<Long> latencies = metrics.stream()
+                .map(RequestMetrics::getLatencyMs)
+                .toList();
 
         return GlobalMetrics.builder()
                 .totalRequests(total)
                 .successfulRequests(success)
-                .failedRequests(total - success)
-                .successRate(total == 0 ? 0 : success * 100.0 / total)
-                .errorRate(total == 0 ? 0 : (total - success) * 100.0 / total)
+                .failedRequests(failed)
+                .successRate(total == 0 ? 0 : (success * 100.0 / total))
+                .errorRate(total == 0 ? 0 : (failed * 100.0 / total))
+
                 .minLatency(latencies.stream().min(Long::compare).orElse(0L))
                 .maxLatency(latencies.stream().max(Long::compare).orElse(0L))
-                .meanLatency((long) latencies.stream().mapToLong(l -> l).average().orElse(0))
+                .meanLatency((long) latencies.stream().mapToLong(Long::longValue).average().orElse(0))
 
                 .p50(PercentileCalculator.p50(latencies))
                 .p90(PercentileCalculator.p90(latencies))
@@ -73,27 +94,27 @@ public class SimpleMetricsAggregator {
                         m -> m.getStartTimeMs() / 1000,
                         Collectors.counting()
                 ))
-                .values().stream()
-                .mapToLong(v -> v)
-                .max().orElse(0);
+                .values()
+                .stream()
+                .mapToLong(Long::longValue)
+                .max()
+                .orElse(0);
     }
 
-    // -------------------------------------------------------
-    // PER-STEP METRICS
-    // -------------------------------------------------------
+
     private List<StepMetrics> buildStepMetrics(
             List<RequestMetrics> metrics,
             List<RequestStep> steps,
             long startedAt,
             long finishedAt
     ) {
-        Map<String, String> stepNameMap = steps.stream()
+        long durationSec = Math.max(1, (finishedAt - startedAt) / 1000);
+
+        Map<String, String> stepNames = steps.stream()
                 .collect(Collectors.toMap(RequestStep::getId, RequestStep::getName));
 
         Map<String, List<RequestMetrics>> grouped =
                 metrics.stream().collect(Collectors.groupingBy(RequestMetrics::getStepId));
-
-        long durationSec = Math.max(1, (finishedAt - startedAt) / 1000);
 
         List<StepMetrics> result = new ArrayList<>();
 
@@ -101,79 +122,156 @@ public class SimpleMetricsAggregator {
             String stepId = entry.getKey();
             List<RequestMetrics> list = entry.getValue();
 
-            List<Long> latencies = list.stream()
-                    .map(RequestMetrics::getLatencyMs)
-                    .collect(Collectors.toList());
-
             long total = list.size();
             long success = list.stream().filter(RequestMetrics::isSuccess).count();
+            long failed = total - success;
 
-            // Status codes
-            Map<Integer, Long> statusCodeDist = new HashMap<>();
-            list.forEach(m -> statusCodeDist.merge(m.getStatusCode(), 1L, Long::sum));
+            List<Long> latencies = list.stream().map(RequestMetrics::getLatencyMs).toList();
 
-            // Errors
-            Map<String, Long> errorDist = new HashMap<>();
-            list.stream().filter(m -> !m.isSuccess())
-                    .forEach(m -> errorDist.merge(m.getErrorType(), 1L, Long::sum));
+            Map<Integer, Long> statusDist = list.stream()
+                    .collect(Collectors.groupingBy(
+                            RequestMetrics::getStatusCode,
+                            Collectors.counting()
+                    ));
+
+            Map<String, Long> errorDist = list.stream()
+                    .filter(r -> !r.isSuccess())
+                    .collect(Collectors.groupingBy(
+                            RequestMetrics::getErrorType,
+                            Collectors.counting()
+                    ));
+
+            List<StepErrorDetail> errorDetailsList = getStepErrorDetails(list);
 
             result.add(
-                StepMetrics.builder()
-                    .stepId(stepId)
-                    .stepName(stepNameMap.get(stepId))
-                    .totalRequests(total)
-                    .successfulRequests(success)
-                    .failedRequests(total - success)
-                    .successRate(total == 0 ? 0 : success * 100.0 / total)
-                    .errorRate(total == 0 ? 0 : (total - success) * 100.0 / total)
-                    .minLatency(latencies.stream().min(Long::compare).orElse(0L))
-                    .maxLatency(latencies.stream().max(Long::compare).orElse(0L))
-                    .meanLatency((long) latencies.stream().mapToLong(x -> x).average().orElse(0))
-                    .p50(PercentileCalculator.p50(latencies))
-                    .p90(PercentileCalculator.p90(latencies))
-                    .p95(PercentileCalculator.p95(latencies))
-                    .p99(PercentileCalculator.p99(latencies))
-                    .rpsAverage(total / (double) durationSec)
-                    .rpsPeak(0) // optional
-                    .statusCodeDistribution(statusCodeDist)
-                    .errorDistribution(errorDist)
-                    .build()
+                    StepMetrics.builder()
+                            .stepId(stepId)
+                            .stepName(stepNames.get(stepId))
+
+                            .totalRequests(total)
+                            .successfulRequests(success)
+                            .failedRequests(failed)
+
+                            .successRate(total == 0 ? 0 : success * 100.0 / total)
+                            .errorRate(total == 0 ? 0 : failed * 100.0 / total)
+
+                            .minLatency(latencies.stream().min(Long::compare).orElse(0L))
+                            .maxLatency(latencies.stream().max(Long::compare).orElse(0L))
+                            .meanLatency((long) latencies.stream().mapToLong(Long::longValue).average().orElse(0))
+
+                            .p50(PercentileCalculator.p50(latencies))
+                            .p90(PercentileCalculator.p90(latencies))
+                            .p95(PercentileCalculator.p95(latencies))
+                            .p99(PercentileCalculator.p99(latencies))
+
+                            .rpsAverage(total / (double) durationSec)
+                            .rpsPeak(0) // optional
+
+                            .statusCodeDistribution(statusDist)
+                            .errorDistribution(errorDist)
+                            .errorDetails(errorDetailsList)
+                            .build()
             );
         }
 
         return result;
     }
 
-    // -------------------------------------------------------
-    // TIMELINE
-    // -------------------------------------------------------
-    private List<TimelinePoint> buildTimeline(List<RequestMetrics> metrics) {
+    private List<StepErrorDetail> getStepErrorDetails(List<RequestMetrics> list) {
+        Map<String, StepErrorDetail> distinctErrors = new HashMap<>();
 
-        Map<Long, List<RequestMetrics>> grouped =
-            metrics.stream()
-                .collect(Collectors.groupingBy(m -> m.getStartTimeMs() / 1000));
+        for (RequestMetrics rm : list) {
+            if (!rm.isSuccess()) {
+
+                // build grouping key: statusCode + errorMessage snippet
+                int code = rm.getStatusCode();
+                String msg = (rm.getErrorMessage() != null ? rm.getErrorMessage() : "error");
+
+                String key = code + ":" + msg;
+
+                distinctErrors.compute(key, (k, v) -> {
+                    if (v == null) {
+                        return StepErrorDetail.builder()
+                                .statusCode(code)
+                                .count(1)
+                                .message(msg)
+                                .build();
+                    } else {
+                        v.setCount(v.getCount() + 1);
+                        return v;
+                    }
+                });
+            }
+        }
+
+        return new ArrayList<>(distinctErrors.values());
+    }
+
+    /**
+     * Produces a simplified (downsampled) timeline of the test.
+     * Why downsample?
+     * - Storing data for every second is too heavy for long tests
+     * - The frontend becomes slow with thousands of points
+     * - Humans can't read 3,600+ seconds of data anyway
+     * How it works:
+     * 1. Compute bucket size so total points <= MAX_TIMELINE_POINTS (e.g., 300)
+     * Example:
+     * 900-second test → bucket size 3 seconds
+     * 3600-second test → bucket size 12 seconds
+     * 2. For each bucket, we aggregate:
+     * - number of requests
+     * - successes
+     * - failures
+     * - RPS (requests / bucketSize)
+     * The timeline powers graphs like:
+     * - RPS over time
+     * - Errors over time
+     * - Test stability across different phases
+     */
+    private List<TimelinePoint> buildTimeline(List<RequestMetrics> metrics, long startedAt, long finishedAt) {
+
+        long durationSec = Math.max(1, (finishedAt - startedAt) / 1000);
+        int bucketSize = (int) Math.max(1, durationSec / (double) MAX_TIMELINE_POINTS);
+
+        // bucketKey = (secondSinceStart / bucketSize)
+        Map<Long, TimelineBucket> buckets = new HashMap<>();
+
+        for (RequestMetrics m : metrics) {
+            long second = (m.getStartTimeMs() / 1000) - (startedAt / 1000);
+            long bucket = second / bucketSize;
+
+            TimelineBucket acc = buckets.computeIfAbsent(bucket, k -> new TimelineBucket());
+            acc.requests++;
+            if (m.isSuccess()) acc.successes++;
+            else acc.failures++;
+        }
 
         List<TimelinePoint> result = new ArrayList<>();
+        for (var e : buckets.entrySet()) {
+            long bucketIndex = e.getKey();
+            TimelineBucket b = e.getValue();
 
-        for (var entry : grouped.entrySet()) {
-            long second = entry.getKey();
-            List<RequestMetrics> list = entry.getValue();
-            long total = list.size();
-            long success = list.stream().filter(RequestMetrics::isSuccess).count();
-            long fail = total - success;
+            long ts = startedAt / 1000 + bucketIndex * bucketSize;
 
             result.add(
-                TimelinePoint.builder()
-                    .timestampSecond(second)
-                    .requests(total)
-                    .successes(success)
-                    .failures(fail)
-                    .rps(total)
-                    .build()
+                    TimelinePoint.builder()
+                            .timestampSecond(ts)
+                            .requests(b.requests)
+                            .successes(b.successes)
+                            .failures(b.failures)
+                            .rps(b.requests / (double) bucketSize)
+                            .build()
             );
         }
 
         result.sort(Comparator.comparingLong(TimelinePoint::getTimestampSecond));
         return result;
+    }
+
+    // local accumulator
+    private static class TimelineBucket {
+        long requests = 0;
+        long successes = 0;
+        long failures = 0;
     }
 }

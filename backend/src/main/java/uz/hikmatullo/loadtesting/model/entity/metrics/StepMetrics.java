@@ -2,6 +2,8 @@ package uz.hikmatullo.loadtesting.model.entity.metrics;
 
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -35,4 +37,12 @@ public class StepMetrics {
 
     private Map<Integer, Long> statusCodeDistribution; // 200 -> 1234, etc.
     private Map<String, Long> errorDistribution;       // timeout -> 45, status_500 -> 12
+    /**
+     * Distinct error list for this step.
+     * Each item represents a unique error signature:
+     *   (statusCode + message snippet)
+     *
+     * Only 1 entry per unique error. Very lightweight.
+     */
+    private List<StepErrorDetail> errorDetails = new ArrayList<>();
 }
