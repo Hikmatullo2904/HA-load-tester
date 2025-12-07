@@ -274,7 +274,7 @@ class HttpRequestUtilTest {
     // BODY TESTS
     // ----------------------------
 
-    
+
     @Test
     void test_BodyMissingVariable_Throws() {
         RequestStep step = RequestStep.builder()

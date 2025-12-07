@@ -38,6 +38,9 @@ public class SimpleMetricsAggregator {
             List<RequestMetrics> metrics,
             List<RequestStep> steps
     ) {
+
+        addErrorDetails(metrics);
+
         GlobalMetrics global = buildGlobalMetrics(metrics, startedAt, finishedAt);
         List<StepMetrics> perStep = buildStepMetrics(metrics, steps, startedAt, finishedAt);
         List<TimelinePoint> timeline = buildTimeline(metrics, startedAt, finishedAt);
@@ -185,16 +188,15 @@ public class SimpleMetricsAggregator {
 
                 // build grouping key: statusCode + errorMessage snippet
                 int code = rm.getStatusCode();
-                String msg = (rm.getErrorMessage() != null ? rm.getErrorMessage() : "error");
 
-                String key = code + ":" + msg;
+                String key = code + ":" + rm.getErrorMessage();
 
                 distinctErrors.compute(key, (k, v) -> {
                     if (v == null) {
                         return StepErrorDetail.builder()
                                 .statusCode(code)
                                 .count(1)
-                                .message(msg)
+                                .message(rm.getErrorMessage())
                                 .build();
                     } else {
                         v.setCount(v.getCount() + 1);
@@ -204,7 +206,13 @@ public class SimpleMetricsAggregator {
             }
         }
 
-        return new ArrayList<>(distinctErrors.values());
+        List<StepErrorDetail> stepErrorDetails = new ArrayList<>(distinctErrors.values());
+        if (stepErrorDetails.size() > 30) {
+            stepErrorDetails = stepErrorDetails.stream()
+                    .limit(30)
+                    .toList();
+        }
+        return stepErrorDetails;
     }
 
     /**
@@ -273,5 +281,42 @@ public class SimpleMetricsAggregator {
         long requests = 0;
         long successes = 0;
         long failures = 0;
+    }
+
+
+    private void addErrorDetails(List<RequestMetrics> metrics) {
+        for (RequestMetrics met : metrics) {
+            if (!met.isSuccess()) {
+                String errorMsg = met.getErrorMessage();
+                String errorType = met.getErrorType();
+                if (errorType == null) {
+                    errorType = classifyError(errorMsg);
+                }
+                errorMsg = truncate(errorMsg, 200);
+
+                met.setErrorType(errorType);
+                met.setErrorMessage(errorMsg);
+            }
+        }
+    }
+
+    private static String truncate(String s, int maxLen) {
+        if (s == null || maxLen <= 0) return null;
+        if (s.length() <= maxLen) return s;
+        return s.substring(0, maxLen) + "...";
+    }
+
+    private String classifyError(String msg) {
+        if (msg == null) return "unknown_error";
+
+        String lower = msg.toLowerCase();
+
+        if (lower.contains("timeout")) return "timeout";
+        if (lower.contains("connect") || lower.contains("connection")) return "connection_error";
+        if (lower.contains("refused")) return "connection_refused";
+        if (lower.contains("ssl") || lower.contains("tls")) return "tls_error";
+        if (lower.contains("unresolved") || lower.contains("unknown host")) return "dns_error";
+
+        return "exception";
     }
 }
