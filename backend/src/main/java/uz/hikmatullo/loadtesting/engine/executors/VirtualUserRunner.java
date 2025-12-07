@@ -127,8 +127,6 @@ public class VirtualUserRunner implements Runnable {
                                         .statusCode(status)
                                         .errorType("extraction_error")
                                         .errorMessage(getErrorMessage(ex.getMessage(), false))
-                                        .responseBodySnippet(null)
-                                        .errorKey(null)
                                         .build();
 
                                 localBuffer.add(errMetric);

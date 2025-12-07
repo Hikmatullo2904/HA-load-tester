@@ -32,21 +32,4 @@ public class RequestMetrics {
      * Keep this small when filling (e.g., truncate to 200 chars).
      */
     private String errorMessage;
-
-    /**
-     * Small truncated snippet of the response body (if available).
-     * Useful for showing representative error content without storing full bodies.
-     * Keep this limited in length (e.g., 200 chars).
-     */
-    private String responseBodySnippet;
-
-    /**
-     * Compact grouping key computed by the executor (optional).
-     * Examples:
-     *  - "500:Database timeout"
-     *  - "timeout:read timed out"
-     *  - "buildRequest:invalid-url"
-     * Use this to group distinct errors efficiently in the aggregator.
-     */
-    private String errorKey;
 }
